@@ -31,7 +31,7 @@ public:
 	Environment();
 	~Environment();
 
-	Response* process(Action* action);
+	Response* process(Action* aAction);
 	const std::vector<std::vector<CeilType>>& getField() const;
 
 private:
@@ -40,9 +40,9 @@ private:
 	std::queue<Point> mCoordinates;
 
 	Response* gotoAction(Action* aGotoAction);
-	Response* moveAction(Action* aMoveAction);
-	Response* lookAction(Action* aLookAction);
-	Response* takeAction(Action* aTakeAction);
+	Response* moveAction(Action* aMoveAction, Point aPosition);
+	Response* lookAction(Action* aLookAction, Point aPosition);
+	Response* takeAction(Action* aTakeAction, Point aPosition);
 	Response* turnAction(Action* aTurnAction);
 	Response* dieAction(Action* aDieAction);
 

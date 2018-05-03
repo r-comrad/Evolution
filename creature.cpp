@@ -12,19 +12,18 @@ Creature::Creature() :
 {
 	reset();
 
-	for (auto& i : mProgram)
-		i = rnd1(MAX_PROGRAM_WORD_VALUE + 1);
-		/*(*mProgram) = 
-		{
-			129, 7, 7, 65, 193, 7, 0, 258,
-			129, 15, 15, 65, 193, 15, 0, 258,
-			129, 23, 23, 65, 193, 23, 0, 258,
-			129, 31, 31, 65, 193, 31, 0, 258,
-			129, 39, 39, 65, 193, 39, 0, 258,
-			129, 47, 47, 65, 193, 47, 0, 258,
-			129, 55, 55, 65, 193, 55, 0, 258,
-			258, 64
-		};*/
+	for (auto& i : mProgram) i = rnd1(MAX_PROGRAM_WORD_VALUE + 1);
+		//mProgram = 
+		//{
+		//	129, 7, 7, 65, 193, 7, 0, 258,
+		//	129, 15, 15, 65, 193, 15, 0, 258,
+		//	129, 23, 23, 65, 193, 23, 0, 258,
+		//	129, 31, 31, 65, 193, 31, 0, 258,
+		//	129, 39, 39, 65, 193, 39, 0, 258,
+		//	129, 47, 47, 65, 193, 47, 0, 258,
+		//	129, 55, 55, 65, 193, 55, 0, 258,
+		//	258, 64
+		//};
 
 
 	if (programDecoder.size() == 0)
@@ -48,8 +47,6 @@ Creature::~Creature()
 Action*
 Creature::getAction()
 {
-	//if (mPrCount >= PROGRAM_SIZE) mPrCount = 0;
-
 	uint_16 curCommand = mProgram[mPrCount];
 	std::map<std::pair<uint_16, uint_16>, ActionType, PairCmp> ::iterator
 		it = programDecoder.find(std::make_pair(curCommand, curCommand));
@@ -160,32 +157,6 @@ Creature::reset()
 	mDirection = Direction(rnd1(8));
 	mPrCount = 0;
 }
-//--------------------------------------------------------------------------------	
-//std::vector<std::vector<uint_16>*>*
-//Creature::reproduction() const
-//{
-//	std::vector<std::vector<uint_16>*>* result =
-//		new std::vector<std::vector<uint_16>*>;
-//
-//	for (uint_8 i = 0; i < CREATURE_REPRODUCTION_COUNT; ++i)
-//		(*result).emplace_back(new std::vector<uint_16>);
-//	for (uint_8 i = 0; i < result->size(); ++i)
-//		(*(*result)[i]) = (*mProgram);
-//	//delete(mProgram); //cout << "176 creature cpp\n";
-//
-//	mutate((*result)[0], 1);	// 1
-//	mutate((*result)[1], 1);	// 2
-//	mutate((*result)[2], 2);	// 3
-//	//mutate((*result)[3], 5);	// 5
-//
-//	return result;
-//}
-//--------------------------------------------------------------------------------
-//void
-//Creature::setProgram(std::vector<uint_8>& aProgram)
-//{
-//	program = aProgram;
-//}
 //--------------------------------------------------------------------------------
 bool 
 Creature::PairCmp::operator()(const std::pair<uint_16, uint_16>& p1,

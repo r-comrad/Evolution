@@ -20,62 +20,53 @@ Environment::Environment() :
 
 	fillField();
 	setCreatures();
-	//fillField();
-	//setCreatures();
-
-	//file1.open("statistic");
-
-	//if (!font.loadFromFile("font.ttf"))
-	//{
-	//	cout << "Font load error!\n";
-	//}
-
-	//text.setFont(font);
 }
 //--------------------------------------------------------------------------------
 Environment::~Environment()
 {}
 //--------------------------------------------------------------------------------
 Response*
-Environment::process(Action* action)
+Environment::process(Action* aAction)
 {
 	Response* response = NULL;
 
-	bool dead = false;
+	Point curPosition = mCoordinates.front();
+	mCoordinates.pop();
+
 	for (uint_8 i = 0; i < MAX_WATCHING_TIME; ++i)
 	{
-		if (action->mActionType == ActionType::GOTO)
+		if (aAction->mActionType == ActionType::GOTO)
 		{
-			response = gotoAction(action);
+			response = gotoAction(aAction);
 		}
-		else if (action->mActionType == ActionType::MOVE)
+		else if (aAction->mActionType == ActionType::MOVE)
 		{
-			response = moveAction(action);
+			response = moveAction(aAction, curPosition);
 		}
-		else if (action->mActionType == ActionType::LOOK)
+		else if (aAction->mActionType == ActionType::LOOK)
 		{
-			response = lookAction(action);
+			response = lookAction(aAction, curPosition);
 		}
-		else if (action->mActionType == ActionType::TAKE)
+		else if (aAction->mActionType == ActionType::TAKE)
 		{
-			response = takeAction(action);
+			response = takeAction(aAction, curPosition);
 		}
-		else if (action->mActionType == ActionType::TURN)
+		else if (aAction->mActionType == ActionType::TURN)
 		{
-			response = turnAction(action);
+			response = turnAction(aAction);
 		}
-		else if (action->mActionType == ActionType::DIE)
+		else if (aAction->mActionType == ActionType::DIE)
 		{
-			response = dieAction(action);
-			dead = true;
+			response = dieAction(aAction, curPosition);
 		}
 	}
 
-	if (!dead)
+	if (!aAction->mActionType == ActionType::DIE)
 	{
-		mCoordinates.push(mCoordinates.front());
+		mCoordinates.push(curPosition);
 	}
-	mCoordinates.pop();
+	
+	delete(aAction);
 
 	return response;
 }
@@ -95,10 +86,11 @@ Environment::gotoAction(Action* aGotoAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::moveAction(Action* aMoveAction)
+Environment::moveAction(Action* aMoveAction, Point aPosition)
 {
 	Response* response = NULL;
 	MoveAction* moveAction = static_cast<MoveAction*>(aMoveAction);
+	moveAction->setCoordinate(aPosition);
 	sint_16 dLife = 0;
  
 	if (mField[moveAction->getNewX()][moveAction->getNewY()] == CeilType::WALL ||
@@ -127,10 +119,11 @@ Environment::moveAction(Action* aMoveAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::lookAction(Action* aLookAction)
+Environment::lookAction(Action* aLookAction, Point aPosition)
 {
 	Response* response = NULL;
 	LookAction* lookAction = static_cast<LookAction*>(aLookAction);
+	lookAction->setCoordinate(aPosition);
 	LookResponse::CeilType ceilType;
 
 	if (mField[lookAction->getX()][lookAction->getY()] == CeilType::EMPTY)
@@ -160,10 +153,11 @@ Environment::lookAction(Action* aLookAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::takeAction(Action* aTakeAction)
+Environment::takeAction(Action* aTakeAction, Point aPosition)
 {
 	Response* response = NULL;
 	LookAction* takeAction = static_cast<LookAction*>(aTakeAction);
+	takeAction->setCoordinate(aPosition);
 
 	sint_16 dLife = 0;
 	if (mField[takeAction->getX()][takeAction->getY()] == FOOD)
@@ -189,8 +183,10 @@ Environment::turnAction(Action* aTurnAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::dieAction(Action* aDieAction)
+Environment::dieAction(Action* aDieAction, Point aPosition)
 {
+	mField[aPosition.mX][aPosition.mY] = EMPTY;
+
 	Response* response = NULL;
 	MoveAction* dieAction = static_cast<MoveAction*>(aDieAction);
 	return response;

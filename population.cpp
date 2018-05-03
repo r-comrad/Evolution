@@ -4,7 +4,8 @@
 // Action implementation
 //--------------------------------------------------------------------------------
 
-Population::Population()
+Population::Population() :
+	mMutateTemplate({ 0, 0, 0, 0, 1, 2, 3, 4 })
 {
 	mCurentOrganism = mOrganisms.begin();
 }
@@ -21,7 +22,6 @@ Population::status()
 		result = LifeStatus::NaturalSelection;
 	}
 	else
-		//else if (mCreatures.size() <= CREATURE_MIN_COUNT) TODO? >0
 	{
 		result = LifeStatus::RequiresEvolution;
 	}
@@ -31,15 +31,6 @@ Population::status()
 void
 Population::evolve()
 {
-	//std::list<Creature> ::iterator it = mOrganisms.begin();
-	//for (uint_16 i = 0; i < mOrganismsChildCount; ++i)
-	//{
-	//	for (uint_16 j = 0; j < mOrganismsChildCount; ++j)
-	//	{
-	//		mOrganisms.push_back(*it);
-	//	}
-	//}
-
 	for (std::list<Creature> ::iterator it = mOrganisms.begin();
 		it != mOrganisms.end(); ++it)
 	{
@@ -53,6 +44,9 @@ Population::evolve()
 		it != mOrganisms.end(); ++it)
 	{
 		it->mutate(mMutateTemplate.front());
+		it->reset();
+
+
 		mMutateTemplate.push(mMutateTemplate.front());
 		mMutateTemplate.pop();
 	}
@@ -61,21 +55,9 @@ Population::evolve()
 void
 Population::savePopulation(std::stringstream ss)
 {
-	//mFileForPrograms.open(FILE_NAME);
-	//if (!mFileForPrograms.is_open())
-	//{
-	//	//cerr << "ERROR #10: Population.cpp (72). Can`t open file.";
-	//	cout << "ERROR #10: Population.cpp (72). Can`t open file.";
-	//}
-	//
-	//for (std::list<Creature> ::iterator it = mOrganisms.begin();
-	//	it != mOrganisms.end(); ++it)
-	//{
 
-	//}
-
-	//mFileForPrograms.close();
 }
+//--------------------------------------------------------------------------------
 void 
 Population::loadPopulation(std::stringstream ss)
 {
@@ -85,7 +67,13 @@ Population::loadPopulation(std::stringstream ss)
 Action* 
 Population::getNextAction()
 {
-	return mCurentOrganism->getAction();
+	Action* action = mCurentOrganism->getAction();
+	if (action->isCompletAction)
+	{
+		mCurentOrganism->step();
+		++mCurentOrganism;
+	}
+	return action;
 }
 //--------------------------------------------------------------------------------
 void 

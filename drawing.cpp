@@ -4,47 +4,97 @@
 // Drawing implementation
 //--------------------------------------------------------------------------------
 
-void 
-Drawing::drawField(sf::RenderWindow& aWindow, Environment& aEnvironment) const
+Drawing::Drawing() :
+	mWindow(sf::VideoMode(1920, 1200), "Evolution"),
+	mDrawFlag(true)
 {
-	const std::vector<std::vector<CeilType>>& field = aEnvironment.getField();
 
-	sf::RectangleShape rectangle(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
-	//sf::RectangleShape rectangle(sf::Vector2f(0, 0));
-	//rectangle.setSize(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
-
-	for (uint_8 i = 0; i < field.size(); ++i)
+}
+//--------------------------------------------------------------------------------
+void 
+Drawing::checkEvents()
+{
+	while (mWindow.pollEvent(mEvent))
 	{
-		for (uint_8 j = 0; j < field[i].size(); ++j)
+		if (mEvent.type == sf::Event::Closed) mWindow.close();
+
+		if (mEvent.type == sf::Event::KeyReleased)
 		{
-			rectangle.setPosition(sf::Vector2f
-			(i * DRAW_SQUARE_SIZE, j * DRAW_SQUARE_SIZE));
-
-			if (field[i][j] == EMPTY)
+			if (mEvent.key.code == sf::Keyboard::Tab)
 			{
-				rectangle.setFillColor(sf::Color::Black);
+				cout << "Tab";
+				mDrawFlag = !mDrawFlag;
 			}
-			else if (field[i][j] == FOOD)
+			if (mEvent.key.code == sf::Keyboard::X)
 			{
-				rectangle.setFillColor(sf::Color::Green);
+				mWindow.close();
 			}
-			else if (field[i][j] == POISON)
-			{
-				rectangle.setFillColor(sf::Color::Red);
-			}
-			else if (field[i][j] == WALL)
-			{
-				rectangle.setFillColor(sf::Color::White);
-			}
-			else if (field[i][j] == CREATURE)
-			{
-				rectangle.setFillColor(sf::Color::Blue);
-			}
-
-			aWindow.draw(rectangle);
 		}
 	}
-
+}
+//--------------------------------------------------------------------------------
+void 
+Drawing::draw()
+{
+	mWindow.clear();
+	if (mDrawFlag)
+	{
+		sf::RectangleShape rectangle(sf::Vector2f(20, 20));
+		rectangle.setSize(sf::Vector2f(20, 20));
+		rectangle.setPosition(sf::Vector2f(20, 20));
+		rectangle.setFillColor(sf::Color::Blue);
+		mWindow.draw(rectangle);
+	}
+	mWindow.display();
+}
+//--------------------------------------------------------------------------------
+bool
+Drawing::isActive()
+{
+	return mWindow.isOpen();
+}
+//--------------------------------------------------------------------------------
+//void 
+//Drawing::drawField() const
+//{
+//	const std::vector<std::vector<CeilType>>& field = aEnvironment.getField();
+//
+//	sf::RectangleShape rectangle(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
+//	//sf::RectangleShape rectangle(sf::Vector2f(0, 0));
+//	//rectangle.setSize(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
+//
+//	for (uint_8 i = 0; i < field.size(); ++i)
+//	{
+//		for (uint_8 j = 0; j < field[i].size(); ++j)
+//		{
+//			rectangle.setPosition(sf::Vector2f
+//			(i * DRAW_SQUARE_SIZE, j * DRAW_SQUARE_SIZE));
+//
+//			if (field[i][j] == EMPTY)
+//			{
+//				rectangle.setFillColor(sf::Color::Black);
+//			}
+//			else if (field[i][j] == FOOD)
+//			{
+//				rectangle.setFillColor(sf::Color::Green);
+//			}
+//			else if (field[i][j] == POISON)
+//			{
+//				rectangle.setFillColor(sf::Color::Red);
+//			}
+//			else if (field[i][j] == WALL)
+//			{
+//				rectangle.setFillColor(sf::Color::White);
+//			}
+//			else if (field[i][j] == CREATURE)
+//			{
+//				rectangle.setFillColor(sf::Color::Blue);
+//			}
+//
+//			aWindow.draw(rectangle);
+//		}
+//	}
+//
 	//		text.setCharacterSize(10);
 	//		//text.setColor(sf::Color::White);
 	//		text.setStyle(sf::Text::Bold | sf::Text::Underlined);
@@ -57,7 +107,7 @@ Drawing::drawField(sf::RenderWindow& aWindow, Environment& aEnvironment) const
 	//				DRAW_SQUARE_SIZE + 1, it->second->getY() * DRAW_SQUARE_SIZE));
 	//			mWindow->draw(text);
 	//		}
-}
+//}
 //--------------------------------------------------------------------------------
 void 
 Drawing::drawCreatures(sf::RenderWindow& aWindow,

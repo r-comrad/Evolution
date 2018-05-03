@@ -11,6 +11,20 @@
 
 class Drawing
 {
+public:
+	Drawing();
+
+	void checkEvents();
+	void draw();
+
+	bool isActive();
+
+private:
+	sf::RenderWindow mWindow;
+	sf::Event mEvent;
+
+	bool mDrawFlag;
+
 	void drawField(sf::RenderWindow& aWindow, Environment& aEnvironment) const;
 	void drawCreatures(sf::RenderWindow& aWindow, 
 		Environment& aEnvironment, Population& aPopulation) const;
