@@ -31,3 +31,7 @@ TurnResponse::TurnResponse() :
 	Response(ActionType::TURN)
 {}
 //--------------------------------------------------------------------------------
+DieResponse::DieResponse() :
+	Response(ActionType::DIE)
+{}
+//--------------------------------------------------------------------------------

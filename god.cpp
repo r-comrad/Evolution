@@ -21,29 +21,29 @@ God::start()
 	{
 		mDrawing.checkEvents();
 
-		if (population.status == LifeStatus::NaturalSelection)
+		if (mPopulation.status() == LifeStatus::NaturalSelection)
 		{
 			step();
 		}
-		else if (population.status == LifeStatus::RequiresEvolution)
+		else if (mPopulation.status() == LifeStatus::RequiresEvolution)
 		{
 			evolve();
 		}
 
-		mDrawing.draw();
+		mDrawing.draw(mEnvironment.getField());
 	}
 }
 //--------------------------------------------------------------------------------
 void 
 God::step()
 {
-	Action* action = population.getNextAction();
-	Response* response = environment.process(action);
-	population.giveResponse(response);
+	Action* action = mPopulation.getNextAction();
+	Response* response = mEnvironment.process(action);
+	mPopulation.giveResponse(response);
 }
 //--------------------------------------------------------------------------------
 void 
 God::evolve()
 {
-	population.evolve();
+	mPopulation.evolve();
 }

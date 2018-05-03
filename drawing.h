@@ -15,7 +15,7 @@ public:
 	Drawing();
 
 	void checkEvents();
-	void draw();
+	void draw(const std::vector<std::vector<CeilType>>& aField);
 
 	bool isActive();
 
@@ -24,8 +24,8 @@ private:
 	sf::Event mEvent;
 
 	bool mDrawFlag;
-
-	void drawField(sf::RenderWindow& aWindow, Environment& aEnvironment) const;
+public:
+	void drawField(const std::vector<std::vector<CeilType>>& aField);
 	void drawCreatures(sf::RenderWindow& aWindow, 
 		Environment& aEnvironment, Population& aPopulation) const;
 	void drawHistory(sf::RenderWindow& aWindow, std::vector<uint_32> aHistory) const;

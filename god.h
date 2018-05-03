@@ -14,8 +14,8 @@ public:
 	void start();
 
 private:
-	Environment environment;
-	Population population;
+	Environment mEnvironment;
+	Population mPopulation;
 	Drawing mDrawing;
 
 	bool drawFlag = true;

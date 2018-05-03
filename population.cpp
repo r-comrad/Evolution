@@ -7,6 +7,7 @@
 Population::Population() :
 	mMutateTemplate({ 0, 0, 0, 0, 1, 2, 3, 4 })
 {
+	mOrganisms.resize(64);
 	mCurentOrganism = mOrganisms.begin();
 }
 //--------------------------------------------------------------------------------
@@ -68,7 +69,7 @@ Action*
 Population::getNextAction()
 {
 	Action* action = mCurentOrganism->getAction();
-	if (action->isCompletAction)
+	if (action->isCompletAction())
 	{
 		mCurentOrganism->step();
 		++mCurentOrganism;

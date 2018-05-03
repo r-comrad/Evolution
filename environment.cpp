@@ -81,7 +81,8 @@ Response*
 Environment::gotoAction(Action* aGotoAction)
 {
 	Response* response = NULL;
-	MoveAction* gotoAction = static_cast<MoveAction*>(aGotoAction);
+	GotoAction* gotoAction = static_cast<GotoAction*>(aGotoAction);
+	response = new GotoResponse();
 	return response;
 }
 //--------------------------------------------------------------------------------
@@ -156,10 +157,14 @@ Response*
 Environment::takeAction(Action* aTakeAction, Point aPosition)
 {
 	Response* response = NULL;
-	LookAction* takeAction = static_cast<LookAction*>(aTakeAction);
+	TakeAction* takeAction = static_cast<TakeAction*>(aTakeAction);
 	takeAction->setCoordinate(aPosition);
 
 	sint_16 dLife = 0;
+	//int rr = takeAction->getX();
+	//int rrr = takeAction->getY();
+	//mField[rr];
+	//mField[rr][rrr];
 	if (mField[takeAction->getX()][takeAction->getY()] == FOOD)
 	{
 		dLife = 10;
@@ -178,7 +183,8 @@ Response*
 Environment::turnAction(Action* aTurnAction)
 {
 	Response* response = NULL;
-	MoveAction* turnAction = static_cast<MoveAction*>(aTurnAction);
+	TurnAction* turnAction = static_cast<TurnAction*>(aTurnAction);
+	response = new TurnResponse();
 	return response;
 }
 //--------------------------------------------------------------------------------
@@ -188,19 +194,64 @@ Environment::dieAction(Action* aDieAction, Point aPosition)
 	mField[aPosition.mX][aPosition.mY] = EMPTY;
 
 	Response* response = NULL;
-	MoveAction* dieAction = static_cast<MoveAction*>(aDieAction);
+	DieAction* dieAction = static_cast<DieAction*>(aDieAction);
+	response = new DieResponse();
 	return response;
 }
 //--------------------------------------------------------------------------------
 void
 Environment::fillField()
 {
+	int base = 600;
+	for (int i = 0; i < base;)
+	{
+		int x = rnd1(N - 1) + 1;
+		int y = rnd1(M - 1) + 1;
 
+		if (mField[x][y] != CeilType::EMPTY)
+		{
+			continue;
+		}
+		mField[x][y] = CeilType::FOOD;
+		mFood.emplace(x, y);
+		++i;
+	}
+
+	for (int i = 0; i < base / 2;)
+	{
+		int x = rnd1(N - 1) + 1;
+		int y = rnd1(M - 1) + 1;
+
+		if (mField[x][y] != CeilType::EMPTY) continue;
+		mField[x][y] = CeilType::POISON;
+		mPoison.emplace(x, y);
+		++i;
+	}
+
+	for (int i = 0; i < base / 3;)
+	{
+		int x = rnd1(N - 1) + 1;
+		int y = rnd1(M - 1) + 1;
+
+		if (mField[x][y] != CeilType::EMPTY) continue;
+		mField[x][y] = CeilType::WALL;
+		mPoison.emplace(x, y);
+		++i;
+	}
 }
 //--------------------------------------------------------------------------------
 void
 Environment::setCreatures()
 {
+	for (int i = 0; i < 64;)
+	{
+		int x = rnd1(N - 1) + 1;
+		int y = rnd1(M - 1) + 1;
 
+		if (mField[x][y] != CeilType::EMPTY) continue;
+		mField[x][y] = CeilType::CREATURE;
+		mCoordinates.emplace(x, y);
+		++i;
+	}
 }
 //--------------------------------------------------------------------------------

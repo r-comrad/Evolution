@@ -55,4 +55,11 @@ public:
 	TurnResponse();
 };
 
+class DieResponse : public Response
+{
+public:
+
+	DieResponse();
+};
+
 #endif // RESPONSE_H

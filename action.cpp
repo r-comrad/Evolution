@@ -32,7 +32,7 @@ MoveAction::getOldX()
 uint_8 
 MoveAction::getOldY()
 {
-	return mOldCoordinate.mX;
+	return mOldCoordinate.mY;
 }
 //--------------------------------------------------------------------------------
 uint_8 
@@ -44,7 +44,7 @@ MoveAction::getNewX()
 uint_8 
 MoveAction::getNewY()
 {
-	return mNewCoordinate.mX;
+	return mNewCoordinate.mY;
 }
 //--------------------------------------------------------------------------------
 void MoveAction::setCoordinate(Point aCoordinate)
@@ -67,7 +67,7 @@ LookAction::getX()
 uint_8 
 LookAction::getY()
 {
-	return mCoordinate.mX;
+	return mCoordinate.mY;
 }
 //--------------------------------------------------------------------------------
 void LookAction::setCoordinate(Point aCoordinate)
@@ -89,7 +89,7 @@ TakeAction::getX()
 uint_8 
 TakeAction::getY()
 {
-	return mCoordinate.mX;
+	return mCoordinate.mY;
 }
 //--------------------------------------------------------------------------------
 void TakeAction::setCoordinate(Point aCoordinate)

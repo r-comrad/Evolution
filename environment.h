@@ -39,12 +39,15 @@ private:
 
 	std::queue<Point> mCoordinates;
 
+	std::queue<Point> mFood;
+	std::queue<Point> mPoison;
+
 	Response* gotoAction(Action* aGotoAction);
 	Response* moveAction(Action* aMoveAction, Point aPosition);
 	Response* lookAction(Action* aLookAction, Point aPosition);
 	Response* takeAction(Action* aTakeAction, Point aPosition);
 	Response* turnAction(Action* aTurnAction);
-	Response* dieAction(Action* aDieAction);
+	Response* dieAction(Action* aDieAction, Point aPosition);
 
 	void fillField();
 	void setCreatures();
