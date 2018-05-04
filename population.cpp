@@ -7,8 +7,12 @@
 Population::Population() :
 	mMutateTemplate({ 0, 0, 0, 0, 1, 2, 3, 4 })
 {
+
 	mOrganisms.resize(64);
 	mCurentOrganism = mOrganisms.begin();
+
+	mPopulatioAge = 0;
+	mPopulationTurnCount = 0;
 }
 //--------------------------------------------------------------------------------
 Population::~Population()
@@ -73,8 +77,28 @@ Population::getNextAction()
 	{
 		mCurentOrganism->step();
 		++mCurentOrganism;
+		++mPopulationTurnCount;
+
+		if (mCurentOrganism == mOrganisms.end())
+		{
+			mCurentOrganism = mOrganisms.begin();
+			++mPopulatioAge;
+			mPopulationTurnCount = 0;
+		}
 	}
 	return action;
+}
+//--------------------------------------------------------------------------------
+uint_16 
+Population::getPopulatioAge()
+{
+	return mPopulatioAge;
+}
+//--------------------------------------------------------------------------------
+uint_16 
+Population::getPopulationTurnCount()
+{
+	return mPopulationTurnCount;
 }
 //--------------------------------------------------------------------------------
 void 

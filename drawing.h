@@ -15,13 +15,16 @@ public:
 	Drawing();
 
 	void checkEvents();
-	void draw(const std::vector<std::vector<CeilType>>& aField);
+	void draw(const std::vector<std::vector<CeilType>>& aField, 
+		uint_16 aPopulatioAge, uint_16 aPopulationTurnCount);
 
 	bool isActive();
 
 private:
 	sf::RenderWindow mWindow;
 	sf::Event mEvent;
+	sf::Font mFont;
+	sf::Text mText;
 
 	bool mDrawFlag;
 public:

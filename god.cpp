@@ -30,7 +30,8 @@ God::start()
 			evolve();
 		}
 
-		mDrawing.draw(mEnvironment.getField());
+		mDrawing.draw(mEnvironment.getField(), 
+			mPopulation.getPopulatioAge(), mPopulation.getPopulationTurnCount());
 	}
 }
 //--------------------------------------------------------------------------------

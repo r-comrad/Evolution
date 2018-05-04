@@ -8,7 +8,14 @@ Drawing::Drawing() :
 	mWindow(sf::VideoMode(1920, 1200), "Evolution"),
 	mDrawFlag(true)
 {
-
+	if (!mFont.loadFromFile("font.ttf"))
+	{
+		cout << "Font load error!\n";
+	}
+	mText.setFont(mFont);
+	mText.setFillColor(sf::Color::White);
+	//mText.setColor(sf::Color(250, 250, 250));
+	mText.setStyle(sf::Text::Bold | sf::Text::Underlined);
 }
 //--------------------------------------------------------------------------------
 void 
@@ -34,13 +41,28 @@ Drawing::checkEvents()
 }
 //--------------------------------------------------------------------------------
 void 
-Drawing::draw(const std::vector<std::vector<CeilType>>& aField)
+Drawing::draw(const std::vector<std::vector<CeilType>>& aField, 
+	uint_16 aPopulatioAge, uint_16 aPopulationTurnCount)
 {
 	mWindow.clear();
+
+
+
 	if (mDrawFlag)
 	{
 		drawField(aField);
 	}
+
+	mText.setCharacterSize(50);
+	mText.setPosition(1650, 50);
+	mText.setString(std::to_string(aPopulatioAge));
+	mWindow.draw(mText);
+
+	mText.setCharacterSize(18);
+	mText.setPosition(1685, 40);
+	mText.setString(std::to_string(aPopulationTurnCount));
+	mWindow.draw(mText);
+
 	mWindow.display();
 }
 //--------------------------------------------------------------------------------

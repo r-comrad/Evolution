@@ -25,12 +25,17 @@ public:
 	void loadPopulation(std::stringstream ss);
 
 	Action* getNextAction();
+	uint_16 getPopulatioAge();
+	uint_16 getPopulationTurnCount();
 	void giveResponse(Response* aResponse);
 
 private:
 	uint_16 mOrganismsMinCount;
 	uint_16 mOrganismsMaxCount;
 	uint_16 mOrganismsChildCount;
+
+	uint_16 mPopulatioAge;
+	uint_16 mPopulationTurnCount;
 
 	// шаблоны для эволюции(колличество изменений)
 	// зацикленные
