@@ -35,33 +35,30 @@ Environment::process(Action* aAction)
 		mCoordinates.pop();
 	}
 
-	for (uint_8 i = 0; i < MAX_WATCHING_TIME; ++i)
+	if (aAction->mActionType == ActionType::GOTO)
 	{
-		if (aAction->mActionType == ActionType::GOTO)
-		{
-			response = gotoAction(aAction);
-		}
-		else if (aAction->mActionType == ActionType::MOVE)
-		{
-			// TODO curPosition?
-			response = moveAction(aAction, curPosition, curPosition);
-		}
-		else if (aAction->mActionType == ActionType::LOOK)
-		{
-			response = lookAction(aAction, curPosition);
-		}
-		else if (aAction->mActionType == ActionType::TAKE)
-		{
-			response = takeAction(aAction, curPosition);
-		}
-		else if (aAction->mActionType == ActionType::TURN)
-		{
-			response = turnAction(aAction);
-		}
-		else if (aAction->mActionType == ActionType::DIE)
-		{
-			response = dieAction(aAction, curPosition);
-		}
+		response = gotoAction(aAction);
+	}
+	else if (aAction->mActionType == ActionType::MOVE)
+	{
+		// TODO curPosition?
+		response = moveAction(aAction, curPosition, curPosition);
+	}
+	else if (aAction->mActionType == ActionType::LOOK)
+	{
+		response = lookAction(aAction, curPosition);
+	}
+	else if (aAction->mActionType == ActionType::TAKE)
+	{
+		response = takeAction(aAction, curPosition);
+	}
+	else if (aAction->mActionType == ActionType::TURN)
+	{
+		response = turnAction(aAction);
+	}
+	else if (aAction->mActionType == ActionType::DIE)
+	{
+		response = dieAction(aAction, curPosition);
 	}
 
 	if (aAction->isCompletAction() && 
@@ -97,6 +94,14 @@ Environment::reset()
 		mPoison.pop();
 	}
 
+	for (uint_16 i = 1; i < N - 1; ++i)
+	{
+		for (uint_16 j = 1; j < M - 1; ++j)
+		{
+			mField[i][j] = CeilType::EMPTY;
+		}
+	}
+
 	fillField();
 	setCreatures();
 }
@@ -111,14 +116,19 @@ Environment::gotoAction(Action* aGotoAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::moveAction(Action* aMoveAction, Point aPosition, Point aNewPosition)
+Environment::moveAction(Action* aMoveAction, Point aPosition, Point& aNewPosition)
 {
 	Response* response = NULL;
 	MoveAction* moveAction = static_cast<MoveAction*>(aMoveAction);
 	moveAction->setCoordinate(aPosition);
-	// TODO: переделать action, возращать Point, использовать функции Point для получения координат
-	aNewPosition = Point(moveAction->getNewX(), moveAction->getNewY());
 	sint_16 dLife = 0;
+
+	//if (moveAction->getNewX() >= (N - 1) || moveAction->getNewY() >= (M - 1))
+	//{
+	//	int y = 0;
+	//	++y;
+	//	cout << y;
+	//}
  
 	if (mField[moveAction->getNewX()][moveAction->getNewY()] == CeilType::WALL ||
 		mField[moveAction->getNewX()][moveAction->getNewY()] == CeilType::CREATURE)
@@ -138,6 +148,9 @@ Environment::moveAction(Action* aMoveAction, Point aPosition, Point aNewPosition
 
 		mField[moveAction->getNewX()][moveAction->getNewY()] = CREATURE;
 		mField[moveAction->getOldX()][moveAction->getOldY()] = EMPTY;
+
+		// TODO: переделать action, возращать Point, использовать функции Point для получения координат
+		aNewPosition = Point(moveAction->getNewX(), moveAction->getNewY());
 	}
 
 	response = new MoveResponse(dLife);
@@ -152,6 +165,13 @@ Environment::lookAction(Action* aLookAction, Point aPosition)
 	LookAction* lookAction = static_cast<LookAction*>(aLookAction);
 	lookAction->setCoordinate(aPosition);
 	LookResponse::CeilType ceilType;
+
+	//if (lookAction->getX() >= N || lookAction->getY() >= M)
+	//{
+	//	int y = 0;
+	//	++y;
+	//	cout << y;
+	//}
 
 	if (mField[lookAction->getX()][lookAction->getY()] == CeilType::EMPTY)
 	{
@@ -185,6 +205,13 @@ Environment::takeAction(Action* aTakeAction, Point aPosition)
 	Response* response = NULL;
 	TakeAction* takeAction = static_cast<TakeAction*>(aTakeAction);
 	takeAction->setCoordinate(aPosition);
+
+	//if (takeAction->getX() >= N || takeAction->getY() >= M)
+	//{
+	//	int y = 0;
+	//	++y;
+	//	cout << y;
+	//}
 
 	sint_16 dLife = 0;
 	//int rr = takeAction->getX();

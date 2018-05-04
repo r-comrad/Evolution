@@ -44,7 +44,7 @@ private:
 	std::queue<Point> mPoison;
 
 	Response* gotoAction(Action* aGotoAction);
-	Response* moveAction(Action* aMoveAction, Point aPosition, Point aNewPosition);
+	Response* moveAction(Action* aMoveAction, Point aPosition, Point& aNewPosition);
 	Response* lookAction(Action* aLookAction, Point aPosition);
 	Response* takeAction(Action* aTakeAction, Point aPosition);
 	Response* turnAction(Action* aTurnAction);

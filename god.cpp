@@ -33,6 +33,11 @@ God::start()
 
 		if (ccc % 64 == 0)
 		{
+			//if (mPopulation.getPopulatioAge() == 15)
+			//{
+			//	int y = 0;
+			//	cout << y;
+			//}
 			mDrawing.draw(mEnvironment.getField(), 
 				mPopulation.getPopulatioAge(), mPopulation.getPopulationTurnCount());
 		}

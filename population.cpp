@@ -7,6 +7,9 @@
 Population::Population() :
 	mMutateTemplate({ 0, 0, 0, 0, 1, 2, 3, 4 })
 {
+	mOrganismsMinCount = 8;
+	mOrganismsMaxCount = 64;
+	mOrganismsChildCount = 7;
 
 	mOrganisms.resize(64);
 	mCurentOrganism = mOrganisms.begin();
@@ -37,8 +40,10 @@ Population::status()
 void
 Population::evolve()
 {
-	for (std::list<Creature> ::iterator it = mOrganisms.begin();
-		it != mOrganisms.end(); ++it)
+	mPopulatioAge = 0;
+
+	std::list<Creature> ::iterator it = mOrganisms.begin();
+	for (uint_8 i = 0; i < mOrganismsMinCount; ++i, ++it)
 	{
 		for (uint_16 j = 0; j < mOrganismsChildCount; ++j)
 		{
@@ -91,6 +96,16 @@ Population::getNextAction()
 			mPopulationTurnCount = 0;
 		}
 	}
+
+	//TODO
+	if (action->mActionType == ActionType::DIE)
+	{
+		std::list<Creature> ::iterator it = mCurentOrganism;
+		if (it != mOrganisms.begin())
+			mOrganisms.erase(--it);
+		else mOrganisms.erase(--mOrganisms.end());
+	}
+
 	return action;
 }
 //--------------------------------------------------------------------------------
