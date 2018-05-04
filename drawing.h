@@ -11,6 +11,8 @@
 
 class Drawing
 {
+	enum DrawingState { NONE, GENERATION, TURN, STEP };
+
 public:
 	Drawing();
 
@@ -27,6 +29,7 @@ private:
 	sf::Text mText;
 
 	bool mDrawFlag;
+	DrawingState mDrawState;
 public:
 	void drawField(const std::vector<std::vector<CeilType>>& aField);
 	void drawCreatures(sf::RenderWindow& aWindow, 

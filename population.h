@@ -34,6 +34,7 @@ private:
 	uint_16 mOrganismsMaxCount;
 	uint_16 mOrganismsChildCount;
 
+	uint_16 mActionCount;
 	uint_16 mPopulatioAge;
 	uint_16 mPopulationTurnCount;
 

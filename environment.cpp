@@ -18,8 +18,7 @@ Environment::Environment() :
 		mField[N - 1][i] = CeilType::WALL;
 	}
 
-	fillField();
-	setCreatures();
+	reset();
 }
 //--------------------------------------------------------------------------------
 Environment::~Environment()
@@ -31,7 +30,10 @@ Environment::process(Action* aAction)
 	Response* response = NULL;
 
 	Point curPosition = mCoordinates.front();
-	mCoordinates.pop();
+	if (aAction->isCompletAction())
+	{
+		mCoordinates.pop();
+	}
 
 	for (uint_8 i = 0; i < MAX_WATCHING_TIME; ++i)
 	{
@@ -41,7 +43,8 @@ Environment::process(Action* aAction)
 		}
 		else if (aAction->mActionType == ActionType::MOVE)
 		{
-			response = moveAction(aAction, curPosition);
+			// TODO curPosition?
+			response = moveAction(aAction, curPosition, curPosition);
 		}
 		else if (aAction->mActionType == ActionType::LOOK)
 		{
@@ -61,7 +64,8 @@ Environment::process(Action* aAction)
 		}
 	}
 
-	if (!aAction->mActionType == ActionType::DIE)
+	if (aAction->isCompletAction() && 
+		!(aAction->mActionType == ActionType::DIE))
 	{
 		mCoordinates.push(curPosition);
 	}
@@ -77,6 +81,26 @@ Environment::getField() const
 	return mField;
 }
 //--------------------------------------------------------------------------------
+void 
+Environment::reset()
+{
+	while (!mCoordinates.empty())
+	{
+		mCoordinates.pop();
+	}
+	while (!mFood.empty())
+	{
+		mFood.pop();
+	}
+	while (!mPoison.empty())
+	{
+		mPoison.pop();
+	}
+
+	fillField();
+	setCreatures();
+}
+//--------------------------------------------------------------------------------
 Response* 
 Environment::gotoAction(Action* aGotoAction)
 {
@@ -87,11 +111,13 @@ Environment::gotoAction(Action* aGotoAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::moveAction(Action* aMoveAction, Point aPosition)
+Environment::moveAction(Action* aMoveAction, Point aPosition, Point aNewPosition)
 {
 	Response* response = NULL;
 	MoveAction* moveAction = static_cast<MoveAction*>(aMoveAction);
 	moveAction->setCoordinate(aPosition);
+	// TODO: переделать action, возращать Point, использовать функции Point для получения координат
+	aNewPosition = Point(moveAction->getNewX(), moveAction->getNewY());
 	sint_16 dLife = 0;
  
 	if (mField[moveAction->getNewX()][moveAction->getNewY()] == CeilType::WALL ||

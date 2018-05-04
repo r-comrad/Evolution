@@ -32,6 +32,26 @@ Drawing::checkEvents()
 				cout << "Tab";
 				mDrawFlag = !mDrawFlag;
 			}
+			if (mEvent.key.code == sf::Keyboard::Num1)
+			{
+				cout << "1";
+				mDrawState = DrawingState::NONE;
+			}
+			if (mEvent.key.code == sf::Keyboard::Num2)
+			{
+				cout << "2";
+				mDrawState = DrawingState::GENERATION;
+			}
+			if (mEvent.key.code == sf::Keyboard::Num3)
+			{
+				cout << "3";
+				mDrawState = DrawingState::TURN;
+			}
+			if (mEvent.key.code == sf::Keyboard::Num4)
+			{
+				cout << "4";
+				mDrawState = DrawingState::STEP;
+			}
 			if (mEvent.key.code == sf::Keyboard::X)
 			{
 				mWindow.close();

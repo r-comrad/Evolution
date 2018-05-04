@@ -6,12 +6,21 @@
 
 Action::Action(ActionType aActionType) :
 	mActionType	(aActionType)
-{}
+{
+	mCompletActionFlag =
+		mActionType == MOVE || mActionType == TAKE || mActionType == DIE;
+}
 //--------------------------------------------------------------------------------
 bool
 Action::isCompletAction()
 {
-	return mActionType == MOVE || mActionType == TAKE || mActionType == DIE;
+	return mCompletActionFlag;
+}
+//--------------------------------------------------------------------------------
+void 
+Action::setActionCount(uint_16 aActionCount)
+{
+	mCompletActionFlag |= aActionCount > 20;
 }
 //--------------------------------------------------------------------------------
 GotoAction::GotoAction() :

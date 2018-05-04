@@ -14,6 +14,10 @@ public:
 	Action(ActionType aActionType);
 
 	bool isCompletAction();
+	void setActionCount(uint_16 aActionCount);
+
+private:
+	bool mCompletActionFlag;
 };
 
 class GotoAction : public Action

@@ -13,6 +13,7 @@ Population::Population() :
 
 	mPopulatioAge = 0;
 	mPopulationTurnCount = 0;
+	mActionCount = 0;
 }
 //--------------------------------------------------------------------------------
 Population::~Population()
@@ -72,12 +73,16 @@ Population::loadPopulation(std::stringstream ss)
 Action* 
 Population::getNextAction()
 {
+	mActionCount++;
 	Action* action = mCurentOrganism->getAction();
+	action->setActionCount(mActionCount);
+
 	if (action->isCompletAction())
 	{
 		mCurentOrganism->step();
 		++mCurentOrganism;
 		++mPopulationTurnCount;
+		mActionCount = 0;
 
 		if (mCurentOrganism == mOrganisms.end())
 		{

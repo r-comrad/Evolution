@@ -14,6 +14,7 @@ God::~God()
 
 }
 //--------------------------------------------------------------------------------
+int ccc = 0;
 void 
 God::start()
 {
@@ -30,8 +31,12 @@ God::start()
 			evolve();
 		}
 
-		mDrawing.draw(mEnvironment.getField(), 
-			mPopulation.getPopulatioAge(), mPopulation.getPopulationTurnCount());
+		if (ccc % 64 == 0)
+		{
+			mDrawing.draw(mEnvironment.getField(), 
+				mPopulation.getPopulatioAge(), mPopulation.getPopulationTurnCount());
+		}
+
 	}
 }
 //--------------------------------------------------------------------------------
@@ -41,10 +46,18 @@ God::step()
 	Action* action = mPopulation.getNextAction();
 	Response* response = mEnvironment.process(action);
 	mPopulation.giveResponse(response);
+
+	if (action->isCompletAction())
+	{
+		++ccc;
+		//mDrawing.draw(mEnvironment.getField(),
+		//	mPopulation.getPopulatioAge(), mPopulation.getPopulationTurnCount());
+	}
 }
 //--------------------------------------------------------------------------------
 void 
 God::evolve()
 {
 	mPopulation.evolve();
+	mEnvironment.reset();
 }

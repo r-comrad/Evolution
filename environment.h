@@ -33,6 +33,7 @@ public:
 
 	Response* process(Action* aAction);
 	const std::vector<std::vector<CeilType>>& getField() const;
+	void reset();
 
 private:
 	std::vector<std::vector<CeilType>> mField;
@@ -43,7 +44,7 @@ private:
 	std::queue<Point> mPoison;
 
 	Response* gotoAction(Action* aGotoAction);
-	Response* moveAction(Action* aMoveAction, Point aPosition);
+	Response* moveAction(Action* aMoveAction, Point aPosition, Point aNewPosition);
 	Response* lookAction(Action* aLookAction, Point aPosition);
 	Response* takeAction(Action* aTakeAction, Point aPosition);
 	Response* turnAction(Action* aTurnAction);
