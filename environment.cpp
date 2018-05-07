@@ -30,10 +30,6 @@ Environment::process(Action* aAction)
 	Response* response = NULL;
 
 	Point curPosition = mCoordinates.front();
-	if (aAction->isCompletAction())
-	{
-		mCoordinates.pop();
-	}
 
 	if (aAction->mActionType == ActionType::GOTO)
 	{
@@ -61,12 +57,15 @@ Environment::process(Action* aAction)
 		response = dieAction(aAction, curPosition);
 	}
 
-	if (aAction->isCompletAction() && 
-		!(aAction->mActionType == ActionType::DIE))
+	if (aAction->isCompletAction())
 	{
-		mCoordinates.push(curPosition);
+		mCoordinates.pop();
+		if (!(aAction->mActionType == ActionType::DIE))
+		{
+			mCoordinates.push(curPosition);
+		}
 	}
-	
+
 	delete(aAction);
 
 	return response;

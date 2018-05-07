@@ -20,7 +20,7 @@ public:
 
 private:
 	std::list<std::pair<Point, uint_16>> ::iterator mIt;
-	// TODO: pair -> uint_16 (first element kept in Field)
+	// -TODO: pair -> uint_16 (first element kept in Field)
 	std::list<std::pair<Point, uint_16>> mList;
 };
 

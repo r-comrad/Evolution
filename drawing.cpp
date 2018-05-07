@@ -160,16 +160,20 @@ Drawing::drawField(const std::vector<std::vector<CeilType>>& aField,
 			}
 
 			mWindow.draw(rectangle);
-
-			if (aField[i][j] == CREATURE)
-			{
-				mText.setCharacterSize(12);
-				mText.setPosition(sf::Vector2f
-				(i * DRAW_SQUARE_SIZE + 1, j * DRAW_SQUARE_SIZE));
-				mText.setString(std::to_string(aList.getNextValue().second));
-				mWindow.draw(mText);
-			}
 		}
+	}
+
+	for (uint_16 i = 0; i < aList.size(); ++i)
+	{
+		std::pair<Point, uint_16> cur = aList.getNextValue();
+		Point coord = cur.first;
+		uint_16 life = cur.second;
+
+		mText.setCharacterSize(12);
+		mText.setPosition(sf::Vector2f
+			(coord.mX * DRAW_SQUARE_SIZE + 1, coord.mY * DRAW_SQUARE_SIZE));
+		mText.setString(std::to_string(life));
+		mWindow.draw(mText);
 	}
 }
 //--------------------------------------------------------------------------------
