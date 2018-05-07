@@ -6,6 +6,8 @@
 #include "domain.h"
 #include "environment.h"
 #include "population.h"
+#include "creatures_life_list.h"
+#include "population_statistic.h"
 
 #define DRAW_SQUARE_SIZE 14
 
@@ -17,8 +19,10 @@ public:
 	Drawing();
 
 	void checkEvents();
-	void draw(const std::vector<std::vector<CeilType>>& aField, 
-		uint_16 aPopulatioAge, uint_16 aPopulationTurnCount);
+	//void draw(const std::vector<std::vector<CeilType>>& aField, 
+	//	uint_16 aPopulatioAge, uint_16 aPopulationTurnCount);
+	void draw(const std::vector<std::vector<CeilType>>& aField,
+		CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic);
 
 	bool isActive();
 
@@ -31,7 +35,8 @@ private:
 	bool mDrawFlag;
 	DrawingState mDrawState;
 public:
-	void drawField(const std::vector<std::vector<CeilType>>& aField);
+	void drawField(const std::vector<std::vector<CeilType>>& aField, 
+		CreaturesLifeList& aList);
 	void drawCreatures(sf::RenderWindow& aWindow, 
 		Environment& aEnvironment, Population& aPopulation) const;
 	void drawHistory(sf::RenderWindow& aWindow, std::vector<uint_32> aHistory) const;

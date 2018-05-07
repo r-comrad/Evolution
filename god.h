@@ -3,6 +3,8 @@
 
 #include "environment.h"
 #include "population.h"
+#include "creatures_life_list.h"
+#include "population_statistic.h"
 #include "drawing.h"
 
 class God

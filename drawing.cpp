@@ -60,27 +60,58 @@ Drawing::checkEvents()
 	}
 }
 //--------------------------------------------------------------------------------
-void 
-Drawing::draw(const std::vector<std::vector<CeilType>>& aField, 
-	uint_16 aPopulatioAge, uint_16 aPopulationTurnCount)
+//void 
+//Drawing::draw(const std::vector<std::vector<CeilType>>& aField, 
+//	uint_16 aPopulatioAge, uint_16 aPopulationTurnCount)
+//{
+//	mWindow.clear();
+//
+//
+//
+//	if (mDrawFlag)
+//	{
+//		drawField(aField);
+//	}
+//
+//	mText.setCharacterSize(50);
+//	mText.setPosition(1650, 50);
+//	mText.setString(std::to_string(aPopulatioAge));
+//	mWindow.draw(mText);
+//
+//	mText.setCharacterSize(18);
+//	mText.setPosition(1685, 40);
+//	mText.setString(std::to_string(aPopulationTurnCount));
+//	mWindow.draw(mText);
+//
+//	mWindow.display();
+//}
+void
+Drawing::draw(const std::vector<std::vector<CeilType>>& aField,
+	CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic)
 {
 	mWindow.clear();
 
-
-
 	if (mDrawFlag)
 	{
-		drawField(aField);
+		drawField(aField, aList);
+
+		//for (uint_8 i = 0; i < aList.size(); ++i)
+		//{
+		//	mText.setCharacterSize(50);
+		//	mText.setPosition(1650, 50);
+		//	mText.setString(std::to_string(aPopStatistic.getPopulationAge()));
+		//	mWindow.draw(mText);
+		//}
 	}
 
 	mText.setCharacterSize(50);
 	mText.setPosition(1650, 50);
-	mText.setString(std::to_string(aPopulatioAge));
+	mText.setString(std::to_string(aPopStatistic.getPopulationAge()));
 	mWindow.draw(mText);
 
 	mText.setCharacterSize(18);
 	mText.setPosition(1685, 40);
-	mText.setString(std::to_string(aPopulationTurnCount));
+	mText.setString(std::to_string(aPopStatistic.getCreatureCount()));
 	mWindow.draw(mText);
 
 	mWindow.display();
@@ -93,7 +124,8 @@ Drawing::isActive()
 }
 //--------------------------------------------------------------------------------
 void 
-Drawing::drawField(const std::vector<std::vector<CeilType>>& aField)
+Drawing::drawField(const std::vector<std::vector<CeilType>>& aField,
+	CreaturesLifeList& aList)
 {
 	sf::RectangleShape rectangle(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
 	//sf::RectangleShape rectangle(sf::Vector2f(0, 0));
@@ -104,7 +136,7 @@ Drawing::drawField(const std::vector<std::vector<CeilType>>& aField)
 		for (uint_8 j = 0; j < aField[i].size(); ++j)
 		{
 			rectangle.setPosition(sf::Vector2f
-			(i * DRAW_SQUARE_SIZE, j * DRAW_SQUARE_SIZE));
+				(i * DRAW_SQUARE_SIZE, j * DRAW_SQUARE_SIZE));
 
 			if (aField[i][j] == EMPTY)
 			{
@@ -128,6 +160,15 @@ Drawing::drawField(const std::vector<std::vector<CeilType>>& aField)
 			}
 
 			mWindow.draw(rectangle);
+
+			if (aField[i][j] == CREATURE)
+			{
+				mText.setCharacterSize(12);
+				mText.setPosition(sf::Vector2f
+				(i * DRAW_SQUARE_SIZE + 1, j * DRAW_SQUARE_SIZE));
+				mText.setString(std::to_string(aList.getNextValue().second));
+				mWindow.draw(mText);
+			}
 		}
 	}
 }

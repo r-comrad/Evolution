@@ -25,6 +25,13 @@ God::start()
 		if (mPopulation.status() == LifeStatus::NaturalSelection)
 		{
 			step();
+
+			CreaturesLifeList list(mEnvironment.getCreaturesCoordinates(), 
+				mPopulation.getCreaturesLifes());
+			const PopulationStatistic& 
+				popStatistic = mPopulation.getPopulationStatistic();
+
+			mDrawing.draw(mEnvironment.getField(), list, popStatistic);
 		}
 		else if (mPopulation.status() == LifeStatus::RequiresEvolution)
 		{
@@ -38,9 +45,9 @@ God::start()
 			//	int y = 0;
 			//	cout << y;
 			//}
-			PopulationStatistic popStatistic = mPopulation.getPopulationStatistic();
-			mDrawing.draw(mEnvironment.getField(), 
-				popStatistic.getPopulationAge(), popStatistic.getCreatureCount());
+			//PopulationStatistic popStatistic = mPopulation.getPopulationStatistic();
+			//mDrawing.draw(mEnvironment.getField(), 
+			//	popStatistic.getPopulationAge(), popStatistic.getCreatureCount());
 		}
 
 	}

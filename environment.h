@@ -26,18 +26,19 @@ enum CeilType { EMPTY, FOOD, POISON, WALL, CREATURE };
 class Environment
 {
 public:
-	
 
 	Environment();
 	~Environment();
 
 	Response* process(Action* aAction);
 	const std::vector<std::vector<CeilType>>& getField() const;
+	std::list<Point> getCreaturesCoordinates();
 	void reset();
 
 private:
 	std::vector<std::vector<CeilType>> mField;
 
+	// TODO: to std::list mb
 	std::queue<Point> mCoordinates;
 
 	std::queue<Point> mFood;

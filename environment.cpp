@@ -78,6 +78,23 @@ Environment::getField() const
 	return mField;
 }
 //--------------------------------------------------------------------------------
+std::list<Point>
+Environment::getCreaturesCoordinates()
+{
+	std::list<Point> result;
+
+	for (uint_8 i = 0; i < mCoordinates.size(); ++i)
+	{
+		Point point = mCoordinates.front();
+		mCoordinates.pop();
+
+		result.emplace_back(point);
+		mCoordinates.push(point);
+	}
+
+	return result;
+}
+//--------------------------------------------------------------------------------
 void 
 Environment::reset()
 {

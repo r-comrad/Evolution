@@ -17,9 +17,9 @@ public:
 	void nextTurn();
 	void nextCycle();
 
-	uint_16 getCommandCount();
-	uint_16 getCreatureCount();
-	uint_16 getPopulationAge();
+	uint_16 getCommandCount() const;
+	uint_16 getCreatureCount() const;
+	uint_16 getPopulationAge() const;
 
 private:
 	uint_16 mCommandCount;

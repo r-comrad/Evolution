@@ -77,6 +77,25 @@ Population::getPopulationStatistic()
 	return mPopStatistic;
 }
 //--------------------------------------------------------------------------------
+std::list<uint_16>
+Population::getCreaturesLifes()
+{
+	std::list<uint_16> result;
+
+	for (uint_8 i = 0; i < mOrganisms.size(); ++i)
+	{
+		result.emplace_back(mCurentOrganism->getLife());
+		
+		++mCurentOrganism;
+		if (mCurentOrganism == mOrganisms.end())
+		{
+			mCurentOrganism = mOrganisms.begin();
+		}
+	}
+
+	return result;
+}
+//--------------------------------------------------------------------------------
 Action* 
 Population::getNextAction()
 {

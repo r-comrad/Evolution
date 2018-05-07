@@ -41,19 +41,19 @@ PopulationStatistic::nextCycle()
 }
 //--------------------------------------------------------------------------------
 uint_16
-PopulationStatistic::getCommandCount()
+PopulationStatistic::getCommandCount() const
 {
 	return mCommandCount;
 }
 //--------------------------------------------------------------------------------
 uint_16
-PopulationStatistic::getCreatureCount()
+PopulationStatistic::getCreatureCount() const
 {
 	return mCreatureCount;
 }
 //--------------------------------------------------------------------------------
 uint_16
-PopulationStatistic::getPopulationAge()
+PopulationStatistic::getPopulationAge() const
 {
 	return mPopulatioAge;
 }

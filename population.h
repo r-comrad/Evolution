@@ -26,6 +26,7 @@ public:
 	void savePopulation(std::stringstream ss);
 	void loadPopulation(std::stringstream ss);
 	const PopulationStatistic& getPopulationStatistic();
+	std::list<uint_16> getCreaturesLifes();
 
 	Action* getNextAction();
 	void processResponse(Response* aResponse);
