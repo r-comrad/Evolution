@@ -38,8 +38,9 @@ God::start()
 			//	int y = 0;
 			//	cout << y;
 			//}
+			PopulationStatistic popStatistic = mPopulation.getPopulationStatistic();
 			mDrawing.draw(mEnvironment.getField(), 
-				mPopulation.getPopulatioAge(), mPopulation.getPopulationTurnCount());
+				popStatistic.getPopulationAge(), popStatistic.getCreatureCount());
 		}
 
 	}
@@ -50,7 +51,7 @@ God::step()
 {
 	Action* action = mPopulation.getNextAction();
 	Response* response = mEnvironment.process(action);
-	mPopulation.giveResponse(response);
+	mPopulation.processResponse(response);
 
 	if (action->isCompletAction())
 	{

@@ -8,6 +8,7 @@
 
 #include "domain.h"
 #include "creature.h"
+#include "population_statistic.h"
 
 #define FILE_NAME ""
 
@@ -21,22 +22,20 @@ public:
 
 	LifeStatus status();
 	void evolve();
+
 	void savePopulation(std::stringstream ss);
 	void loadPopulation(std::stringstream ss);
+	const PopulationStatistic& getPopulationStatistic();
 
 	Action* getNextAction();
-	uint_16 getPopulatioAge();
-	uint_16 getPopulationTurnCount();
-	void giveResponse(Response* aResponse);
+	void processResponse(Response* aResponse);
 
 private:
 	uint_16 mOrganismsMinCount;
 	uint_16 mOrganismsMaxCount;
 	uint_16 mOrganismsChildCount;
 
-	uint_16 mActionCount;
-	uint_16 mPopulatioAge;
-	uint_16 mPopulationTurnCount;
+	PopulationStatistic mPopStatistic;
 
 	// шаблоны для эволюции(колличество изменений)
 	// зацикленные

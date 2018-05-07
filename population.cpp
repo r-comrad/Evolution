@@ -13,10 +13,6 @@ Population::Population() :
 
 	mOrganisms.resize(64);
 	mCurentOrganism = mOrganisms.begin();
-
-	mPopulatioAge = 0;
-	mPopulationTurnCount = 0;
-	mActionCount = 0;
 }
 //--------------------------------------------------------------------------------
 Population::~Population()
@@ -40,7 +36,7 @@ Population::status()
 void
 Population::evolve()
 {
-	mPopulatioAge = 0;
+	mPopStatistic.nextCycle();
 
 	std::list<Creature> ::iterator it = mOrganisms.begin();
 	for (uint_8 i = 0; i < mOrganismsMinCount; ++i, ++it)
@@ -75,25 +71,29 @@ Population::loadPopulation(std::stringstream ss)
 
 }
 //--------------------------------------------------------------------------------
+const PopulationStatistic& 
+Population::getPopulationStatistic()
+{
+	return mPopStatistic;
+}
+//--------------------------------------------------------------------------------
 Action* 
 Population::getNextAction()
 {
-	mActionCount++;
 	Action* action = mCurentOrganism->getAction();
-	action->setActionCount(mActionCount);
+	action->setActionCount(mPopStatistic.getCommandCount());
+	mPopStatistic.nextCommand();
 
 	if (action->isCompletAction())
 	{
 		mCurentOrganism->step();
 		++mCurentOrganism;
-		++mPopulationTurnCount;
-		mActionCount = 0;
+		mPopStatistic.nextCreature();
 
 		if (mCurentOrganism == mOrganisms.end())
 		{
 			mCurentOrganism = mOrganisms.begin();
-			++mPopulatioAge;
-			mPopulationTurnCount = 0;
+			mPopStatistic.nextTurn();
 		}
 	}
 
@@ -109,20 +109,20 @@ Population::getNextAction()
 	return action;
 }
 //--------------------------------------------------------------------------------
-uint_16 
-Population::getPopulatioAge()
-{
-	return mPopulatioAge;
-}
-//--------------------------------------------------------------------------------
-uint_16 
-Population::getPopulationTurnCount()
-{
-	return mPopulationTurnCount;
-}
+//uint_16 
+//Population::getPopulatioAge()
+//{
+//	return mPopulatioAge;
+//}
+////--------------------------------------------------------------------------------
+//uint_16 
+//Population::getPopulationTurnCount()
+//{
+//	return mPopulationTurnCount;
+//}
 //--------------------------------------------------------------------------------
 void 
-Population::giveResponse(Response* aResponse)
+Population::processResponse(Response* aResponse)
 {
 	mCurentOrganism->processResponses(aResponse);
 }
