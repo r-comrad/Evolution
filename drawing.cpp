@@ -6,7 +6,9 @@
 
 Drawing::Drawing() :
 	mWindow(sf::VideoMode(1920, 1200), "Evolution"),
-	mDrawFlag(true)
+	mDrawFlag(true),
+	nextStep(false),
+	stepByStepFlag(false)
 {
 	if (!mFont.loadFromFile("font.ttf"))
 	{
@@ -14,7 +16,6 @@ Drawing::Drawing() :
 	}
 	mText.setFont(mFont);
 	mText.setFillColor(sf::Color::White);
-	//mText.setColor(sf::Color(250, 250, 250));
 	mText.setStyle(sf::Text::Bold | sf::Text::Underlined);
 }
 //--------------------------------------------------------------------------------
@@ -52,70 +53,54 @@ Drawing::checkEvents()
 				cout << "4";
 				mDrawState = DrawingState::STEP;
 			}
+			if (mEvent.key.code == sf::Keyboard::LShift)
+			{
+
+				cout << "LShift";
+				stepByStepFlag = !stepByStepFlag;
+			}
+			if (mEvent.key.code == sf::Keyboard::Q)
+			{
+				cout << "Q";
+				nextStep = true;
+			}
 			if (mEvent.key.code == sf::Keyboard::X)
 			{
 				mWindow.close();
 			}
 		}
 	}
+
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::W))
+	{
+		cout << "W";
+		nextStep = true;
+	}
 }
 //--------------------------------------------------------------------------------
-//void 
-//Drawing::draw(const std::vector<std::vector<CeilType>>& aField, 
-//	uint_16 aPopulatioAge, uint_16 aPopulationTurnCount)
+//void
+//Drawing::draw(const std::vector<std::vector<CeilType>>& aField,
+//	CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic)
 //{
 //	mWindow.clear();
 //
-//
-//
 //	if (mDrawFlag)
 //	{
-//		drawField(aField);
+//		drawField(aField, aList);
 //	}
 //
 //	mText.setCharacterSize(50);
 //	mText.setPosition(1650, 50);
-//	mText.setString(std::to_string(aPopulatioAge));
+//	mText.setString(std::to_string(aPopStatistic.getPopulationAge()));
 //	mWindow.draw(mText);
 //
 //	mText.setCharacterSize(18);
 //	mText.setPosition(1685, 40);
-//	mText.setString(std::to_string(aPopulationTurnCount));
+//	mText.setString(std::to_string(aPopStatistic.getCreatureCount()));
 //	mWindow.draw(mText);
 //
 //	mWindow.display();
 //}
-void
-Drawing::draw(const std::vector<std::vector<CeilType>>& aField,
-	CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic)
-{
-	mWindow.clear();
-
-	if (mDrawFlag)
-	{
-		drawField(aField, aList);
-
-		//for (uint_8 i = 0; i < aList.size(); ++i)
-		//{
-		//	mText.setCharacterSize(50);
-		//	mText.setPosition(1650, 50);
-		//	mText.setString(std::to_string(aPopStatistic.getPopulationAge()));
-		//	mWindow.draw(mText);
-		//}
-	}
-
-	mText.setCharacterSize(50);
-	mText.setPosition(1650, 50);
-	mText.setString(std::to_string(aPopStatistic.getPopulationAge()));
-	mWindow.draw(mText);
-
-	mText.setCharacterSize(18);
-	mText.setPosition(1685, 40);
-	mText.setString(std::to_string(aPopStatistic.getCreatureCount()));
-	mWindow.draw(mText);
-
-	mWindow.display();
-}
 //--------------------------------------------------------------------------------
 bool
 Drawing::isActive()
@@ -123,20 +108,31 @@ Drawing::isActive()
 	return mWindow.isOpen();
 }
 //--------------------------------------------------------------------------------
-void 
-Drawing::drawField(const std::vector<std::vector<CeilType>>& aField,
-	CreaturesLifeList& aList)
+void
+Drawing::clear()
 {
+	mWindow.clear();
+}
+//--------------------------------------------------------------------------------
+void
+Drawing::display()
+{
+	mWindow.display();
+}
+//--------------------------------------------------------------------------------
+void 
+Drawing::drawField(const std::vector<std::vector<CeilType>>& aField)
+{
+	if (mDrawFlag == false) return;
+
 	sf::RectangleShape rectangle(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
-	//sf::RectangleShape rectangle(sf::Vector2f(0, 0));
-	//rectangle.setSize(sf::Vector2f(DRAW_SQUARE_SIZE, DRAW_SQUARE_SIZE));
 
 	for (uint_8 i = 0; i < aField.size(); ++i)
 	{
 		for (uint_8 j = 0; j < aField[i].size(); ++j)
 		{
 			rectangle.setPosition(sf::Vector2f
-				(i * DRAW_SQUARE_SIZE, j * DRAW_SQUARE_SIZE));
+				(30 + i * DRAW_SQUARE_SIZE, 30 + j * DRAW_SQUARE_SIZE));
 
 			if (aField[i][j] == EMPTY)
 			{
@@ -163,6 +159,26 @@ Drawing::drawField(const std::vector<std::vector<CeilType>>& aField,
 		}
 	}
 
+	mText.setCharacterSize(10);
+	for (uint_8 i = 0; i < aField.size(); ++i)
+	{
+		mText.setPosition(35 + i * (DRAW_SQUARE_SIZE), 15);
+		mText.setString(std::to_string(i));
+		mWindow.draw(mText);
+	}
+	for (uint_8 i = 0; i < aField[0].size(); ++i)
+	{
+		mText.setPosition(15, 30 + i * (DRAW_SQUARE_SIZE));
+		mText.setString(std::to_string(i));
+		mWindow.draw(mText);
+	}
+}
+//--------------------------------------------------------------------------------
+void 
+Drawing::drawCreaturesLifes(CreaturesLifeList& aList)
+{
+	if (mDrawFlag == false) return;
+
 	for (uint_16 i = 0; i < aList.size(); ++i)
 	{
 		std::pair<Point, uint_16> cur = aList.getNextValue();
@@ -171,10 +187,47 @@ Drawing::drawField(const std::vector<std::vector<CeilType>>& aField,
 
 		mText.setCharacterSize(12);
 		mText.setPosition(sf::Vector2f
-			(coord.mX * DRAW_SQUARE_SIZE + 1, coord.mY * DRAW_SQUARE_SIZE));
+		(30 + coord.mX * DRAW_SQUARE_SIZE + 1, 30 + coord.mY * DRAW_SQUARE_SIZE));
 		mText.setString(std::to_string(life));
 		mWindow.draw(mText);
 	}
+}
+//--------------------------------------------------------------------------------
+void
+Drawing::drawStatistic(const PopulationStatistic& aPopStatistic)
+{
+	mText.setCharacterSize(18);
+	mText.setPosition(1685, 40);
+	mText.setString(std::to_string(aPopStatistic.getCreatureCount()));
+	mWindow.draw(mText);
+
+	const std::list<uint_16>& ages = aPopStatistic.getAllAges();
+	uint_16 num = 0;
+	for (auto& i : ages)
+	{
+		mText.setCharacterSize(50);
+		mText.setPosition(1650, 50 + num * 50);
+		mText.setString(std::to_string(i));
+		mWindow.draw(mText);
+		num++;
+	}
+}
+//--------------------------------------------------------------------------------
+bool 
+Drawing::pressedN()
+{
+	if (nextStep == true)
+	{
+		nextStep = false;
+		return true;
+	}
+	return false;
+}
+//--------------------------------------------------------------------------------
+bool 
+Drawing::stepByStep()
+{
+	return stepByStepFlag;
 }
 //--------------------------------------------------------------------------------
 void 

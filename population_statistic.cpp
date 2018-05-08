@@ -8,7 +8,7 @@
 PopulationStatistic::PopulationStatistic() :
 	mCommandCount		(0),
 	mCreatureCount		(0),
-	mPopulatioAge		(0)
+	mPopulationAges		{ 0 }
 {}
 //--------------------------------------------------------------------------------
 void
@@ -29,7 +29,7 @@ PopulationStatistic::nextTurn()
 {
 	mCommandCount = 0;
 	mCreatureCount = 0;
-	mPopulatioAge++;
+	(*mPopulationAges.begin())++;
 }
 //--------------------------------------------------------------------------------
 void
@@ -37,7 +37,9 @@ PopulationStatistic::nextCycle()
 {
 	mCommandCount = 0;
 	mCreatureCount = 0;
-	mPopulatioAge = 0;
+	mPopulationAges.emplace_front(0);
+	if (mPopulationAges.size() > POPULATION_AGE_MEMORY_SIZE)
+		mPopulationAges.pop_back();
 }
 //--------------------------------------------------------------------------------
 uint_16
@@ -55,6 +57,11 @@ PopulationStatistic::getCreatureCount() const
 uint_16
 PopulationStatistic::getPopulationAge() const
 {
-	return mPopulatioAge;
+	return *mPopulationAges.begin();
 }
 //--------------------------------------------------------------------------------
+const std::list<uint_16>& 
+PopulationStatistic::getAllAges() const
+{
+	return mPopulationAges;
+}

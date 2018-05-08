@@ -12,7 +12,7 @@
 
 #define FILE_NAME ""
 
-enum LifeStatus { NaturalSelection, RequiresEvolution };
+enum LifeStatus { NewTurn, NewCreature, NaturalSelection, RequiresEvolution };
 
 class Population
 {
@@ -44,9 +44,6 @@ private:
 
 	std::list<Creature> ::iterator mCurentOrganism;
 	std::list<Creature> mOrganisms;
-	//std::vector<Creature> mOrganisms;
-
-	//std::ofstream mFileForPrograms;
 };
 
 #endif // POPULATION_H

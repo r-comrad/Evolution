@@ -4,6 +4,11 @@
 // Enviroment implementation
 //--------------------------------------------------------------------------------
 
+#define N (105 + 2)
+#define M (75 + 2)
+
+#define MAX_WATCHING_TIME 20
+
 Environment::Environment() :
 	mField				(N, std::vector <CeilType> (M, CeilType::EMPTY))
 {

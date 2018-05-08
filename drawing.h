@@ -21,10 +21,20 @@ public:
 	void checkEvents();
 	//void draw(const std::vector<std::vector<CeilType>>& aField, 
 	//	uint_16 aPopulatioAge, uint_16 aPopulationTurnCount);
-	void draw(const std::vector<std::vector<CeilType>>& aField,
-		CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic);
+	//void draw(const std::vector<std::vector<CeilType>>& aField,
+	//	CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic);
 
 	bool isActive();
+
+	void clear();
+	void display();
+
+	void drawField(const std::vector<std::vector<CeilType>>& aField);
+	void drawCreaturesLifes(CreaturesLifeList& aList);
+	void drawStatistic(const PopulationStatistic& aPopStatistic);
+
+	bool pressedN();
+	bool stepByStep();
 
 private:
 	sf::RenderWindow mWindow;
@@ -33,10 +43,10 @@ private:
 	sf::Text mText;
 
 	bool mDrawFlag;
+	bool nextStep;
+	bool stepByStepFlag;
 	DrawingState mDrawState;
 public:
-	void drawField(const std::vector<std::vector<CeilType>>& aField, 
-		CreaturesLifeList& aList);
 	void drawCreatures(sf::RenderWindow& aWindow, 
 		Environment& aEnvironment, Population& aPopulation) const;
 	void drawHistory(sf::RenderWindow& aWindow, std::vector<uint_32> aHistory) const;

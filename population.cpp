@@ -22,7 +22,15 @@ LifeStatus
 Population::status()
 {
 	LifeStatus result;
-	if (mOrganisms.size() > mOrganismsMinCount)
+	if (mPopStatistic.getPopulationAge() == 0)
+	{
+		result = LifeStatus::NewTurn;
+	}
+	if (mPopStatistic.getCommandCount() == 0)
+	{
+		result = LifeStatus::NewCreature;
+	}
+	else if (mOrganisms.size() > mOrganismsMinCount)
 	{
 		result = LifeStatus::NaturalSelection;
 	}
