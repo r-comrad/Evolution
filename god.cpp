@@ -26,12 +26,15 @@ God::start()
 			step();
 
 			mDrawing.clear();
-			CreaturesLifeList list(mEnvironment.getCreaturesCoordinates(),
-				mPopulation.getCreaturesLifes());
+			if (mDrawing.isDraw())
+			{
+				CreaturesLifeList list(mEnvironment.getCreaturesCoordinates(),
+					mPopulation.getCreaturesLifes());
+				mDrawing.drawField(mEnvironment.getField());
+				mDrawing.drawCreaturesLifes(list);
+			}
 			const PopulationStatistic&
 				popStatistic = mPopulation.getPopulationStatistic();
-			mDrawing.drawField(mEnvironment.getField());
-			mDrawing.drawCreaturesLifes(list);
 			mDrawing.drawStatistic(popStatistic);
 			mDrawing.display();
 		}
@@ -42,12 +45,15 @@ God::start()
 			step();
 
 			mDrawing.clear();
-			CreaturesLifeList list(mEnvironment.getCreaturesCoordinates(),
-				mPopulation.getCreaturesLifes());
+			if (mDrawing.isDraw())
+			{
+				CreaturesLifeList list(mEnvironment.getCreaturesCoordinates(),
+					mPopulation.getCreaturesLifes());
+				mDrawing.drawField(mEnvironment.getField());
+				mDrawing.drawCreaturesLifes(list);
+			}
 			const PopulationStatistic&
 				popStatistic = mPopulation.getPopulationStatistic();
-			mDrawing.drawField(mEnvironment.getField());
-			mDrawing.drawCreaturesLifes(list);
 			mDrawing.drawStatistic(popStatistic);
 			mDrawing.display();
 		}

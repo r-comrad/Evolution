@@ -134,8 +134,6 @@ Creature::processResponses(Response* aResponse)
 	}
 	else if (aResponse->mActionType == ActionType::TURN)
 	{}
-
-	delete(aResponse);			// TODO
 }
 //--------------------------------------------------------------------------------
 void 

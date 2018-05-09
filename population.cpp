@@ -143,7 +143,7 @@ Population::processResponse(Response* aResponse)
 		}
 	}
 
-	//TODO
+	//TODO RRRRRRRRRRRRRRRRRR
 	if (aResponse->mActionType == ActionType::DIE)
 	{
 		std::list<Creature> ::iterator it = mCurentOrganism;
@@ -151,5 +151,7 @@ Population::processResponse(Response* aResponse)
 			mOrganisms.erase(--it);
 		else mOrganisms.erase(--mOrganisms.end());
 	}
+
+	delete(aResponse);			// TODO
 }
 //--------------------------------------------------------------------------------

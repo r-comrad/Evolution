@@ -25,6 +25,7 @@ public:
 	//	CreaturesLifeList& aList, const PopulationStatistic& aPopStatistic);
 
 	bool isActive();
+	bool isDraw();
 
 	void clear();
 	void display();
