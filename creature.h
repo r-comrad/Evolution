@@ -28,7 +28,7 @@ public:
 	void step();
 	void reset();
 
-	uint_16 getLife() const;
+	sint_16 getLife() const;
 
 	void mutate(uint_8 aMutCount);
 

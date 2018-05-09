@@ -4,34 +4,42 @@
 // Response implementation
 //--------------------------------------------------------------------------------
 
-Response::Response(ActionType aActionType) :
+Response::Response(ActionType aActionType, bool aCompletActionFlag) :
 	mActionType(aActionType)
+{
+	mCompletActionFlag = aCompletActionFlag;
+}
+//--------------------------------------------------------------------------------
+bool
+Response::isCompletAction()
+{
+	return mCompletActionFlag;
+}
+//--------------------------------------------------------------------------------
+GotoResponse::GotoResponse(bool aCompletActionFlag) :
+	Response(ActionType::GOTO, aCompletActionFlag)
 {}
 //--------------------------------------------------------------------------------
-GotoResponse::GotoResponse() :
-	Response(ActionType::GOTO)
-{}
-//--------------------------------------------------------------------------------
-MoveResponse::MoveResponse(sint_16 aDLife) :
-	Response(ActionType::MOVE),
+MoveResponse::MoveResponse(sint_16 aDLife, bool aCompletActionFlag) :
+	Response(ActionType::MOVE, aCompletActionFlag),
 	mDLife(aDLife)
 {}
 //--------------------------------------------------------------------------------
-LookResponse::LookResponse(CeilType aCeilType) :
-	Response(ActionType::LOOK),
+LookResponse::LookResponse(CeilType aCeilType, bool aCompletActionFlag) :
+	Response(ActionType::LOOK, aCompletActionFlag),
 	mCeilType(aCeilType)
 {}
 //--------------------------------------------------------------------------------
-TakeResponse::TakeResponse(sint_16 aDLife) :
-	Response(ActionType::TAKE),
+TakeResponse::TakeResponse(sint_16 aDLife, bool aCompletActionFlag) :
+	Response(ActionType::TAKE, aCompletActionFlag),
 	mDLife(aDLife)
 {}
 //--------------------------------------------------------------------------------
-TurnResponse::TurnResponse() :
-	Response(ActionType::TURN)
+TurnResponse::TurnResponse(bool aCompletActionFlag) :
+	Response(ActionType::TURN, aCompletActionFlag)
 {}
 //--------------------------------------------------------------------------------
-DieResponse::DieResponse() :
-	Response(ActionType::DIE)
+DieResponse::DieResponse(bool aCompletActionFlag) :
+	Response(ActionType::DIE, aCompletActionFlag)
 {}
 //--------------------------------------------------------------------------------

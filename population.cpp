@@ -85,10 +85,10 @@ Population::getPopulationStatistic()
 	return mPopStatistic;
 }
 //--------------------------------------------------------------------------------
-std::list<uint_16>
+std::list<sint_16>
 Population::getCreaturesLifes()
 {
-	std::list<uint_16> result;
+	std::list<sint_16> result;
 
 	for (uint_8 i = 0; i < mOrganisms.size(); ++i)
 	{
@@ -110,29 +110,6 @@ Population::getNextAction()
 	Action* action = mCurentOrganism->getAction();
 	action->setActionCount(mPopStatistic.getCommandCount());
 	mPopStatistic.nextCommand();
-
-	if (action->isCompletAction())
-	{
-		mCurentOrganism->step();
-		++mCurentOrganism;
-		mPopStatistic.nextCreature();
-
-		if (mCurentOrganism == mOrganisms.end())
-		{
-			mCurentOrganism = mOrganisms.begin();
-			mPopStatistic.nextTurn();
-		}
-	}
-
-	//TODO
-	if (action->mActionType == ActionType::DIE)
-	{
-		std::list<Creature> ::iterator it = mCurentOrganism;
-		if (it != mOrganisms.begin())
-			mOrganisms.erase(--it);
-		else mOrganisms.erase(--mOrganisms.end());
-	}
-
 	return action;
 }
 //--------------------------------------------------------------------------------
@@ -152,5 +129,27 @@ void
 Population::processResponse(Response* aResponse)
 {
 	mCurentOrganism->processResponses(aResponse);
+
+	if (aResponse->isCompletAction())
+	{
+		mCurentOrganism->step();
+		++mCurentOrganism;
+		mPopStatistic.nextCreature();
+
+		if (mCurentOrganism == mOrganisms.end())
+		{
+			mCurentOrganism = mOrganisms.begin();
+			mPopStatistic.nextTurn();
+		}
+	}
+
+	//TODO
+	if (aResponse->mActionType == ActionType::DIE)
+	{
+		std::list<Creature> ::iterator it = mCurentOrganism;
+		if (it != mOrganisms.begin())
+			mOrganisms.erase(--it);
+		else mOrganisms.erase(--mOrganisms.end());
+	}
 }
 //--------------------------------------------------------------------------------

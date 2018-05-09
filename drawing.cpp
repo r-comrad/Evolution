@@ -181,9 +181,9 @@ Drawing::drawCreaturesLifes(CreaturesLifeList& aList)
 
 	for (uint_16 i = 0; i < aList.size(); ++i)
 	{
-		std::pair<Point, uint_16> cur = aList.getNextValue();
+		std::pair<Point, sint_16> cur = aList.getNextValue();
 		Point coord = cur.first;
-		uint_16 life = cur.second;
+		sint_16 life = cur.second;
 
 		mText.setCharacterSize(12);
 		mText.setPosition(sf::Vector2f

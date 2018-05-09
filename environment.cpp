@@ -132,7 +132,7 @@ Environment::gotoAction(Action* aGotoAction)
 {
 	Response* response = NULL;
 	GotoAction* gotoAction = static_cast<GotoAction*>(aGotoAction);
-	response = new GotoResponse();
+	response = new GotoResponse(gotoAction->isCompletAction());
 	return response;
 }
 //--------------------------------------------------------------------------------
@@ -174,7 +174,7 @@ Environment::moveAction(Action* aMoveAction, Point aPosition, Point& aNewPositio
 		aNewPosition = Point(moveAction->getNewX(), moveAction->getNewY());
 	}
 
-	response = new MoveResponse(dLife);
+	response = new MoveResponse(dLife, moveAction->isCompletAction());
 
 	return response;
 }
@@ -215,7 +215,7 @@ Environment::lookAction(Action* aLookAction, Point aPosition)
 		ceilType = LookResponse::CeilType::CREATURE;
 	}
 
-	response = new LookResponse(ceilType);
+	response = new LookResponse(ceilType, lookAction->isCompletAction());
 
 	return response;
 }
@@ -249,7 +249,7 @@ Environment::takeAction(Action* aTakeAction, Point aPosition)
 		mField[takeAction->getX()][takeAction->getY()] = FOOD;
 	}
 
-	response = new TakeResponse(dLife);
+	response = new TakeResponse(dLife, takeAction->isCompletAction());
 	return response;
 }
 //--------------------------------------------------------------------------------
@@ -258,7 +258,7 @@ Environment::turnAction(Action* aTurnAction)
 {
 	Response* response = NULL;
 	TurnAction* turnAction = static_cast<TurnAction*>(aTurnAction);
-	response = new TurnResponse();
+	response = new TurnResponse(turnAction->isCompletAction());
 	return response;
 }
 //--------------------------------------------------------------------------------
@@ -269,7 +269,7 @@ Environment::dieAction(Action* aDieAction, Point aPosition)
 
 	Response* response = NULL;
 	DieAction* dieAction = static_cast<DieAction*>(aDieAction);
-	response = new DieResponse();
+	response = new DieResponse(dieAction->isCompletAction());
 	return response;
 }
 //--------------------------------------------------------------------------------

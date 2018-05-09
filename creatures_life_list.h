@@ -12,16 +12,16 @@ class CreaturesLifeList
 {
 public:
 	CreaturesLifeList(std::list<Point> aCreaturesCoordinates, 
-		std::list<uint_16> aCreaturesLifes);
+		std::list<sint_16> aCreaturesLifes);
 
-	std::pair<Point, uint_16> getNextValue();
+	std::pair<Point, sint_16> getNextValue();
 
 	uint_16 size();
 
 private:
-	std::list<std::pair<Point, uint_16>> ::iterator mIt;
+	std::list<std::pair<Point, sint_16>> ::iterator mIt;
 	// -TODO: pair -> uint_16 (first element kept in Field)
-	std::list<std::pair<Point, uint_16>> mList;
+	std::list<std::pair<Point, sint_16>> mList;
 };
 
 #endif // CREATURES_LIFE_LIST_H

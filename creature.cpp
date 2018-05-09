@@ -144,7 +144,7 @@ Creature::step()
 	--mLife;
 }
 //--------------------------------------------------------------------------------
-uint_16
+sint_16
 Creature::getLife() const
 {
 	return mLife;
