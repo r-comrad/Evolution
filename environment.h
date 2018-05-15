@@ -21,23 +21,27 @@ public:
 	std::list<Point> getCreaturesCoordinates();
 	void reset();
 
+	void step();
+
 private:
 	std::vector<std::vector<CeilType>> mField;
 
 	// TODO: to std::list mb
-	std::queue<Point> mCoordinates;
+	std::list<Point> ::iterator mCurentCoordinate;
+	std::list<Point> mCoordinates;
 
-	std::queue<Point> mFood;
-	std::queue<Point> mPoison;
+	sint_16 poison = 0;
+	sint_16 food = 0;
 
 	Response* gotoAction(Action* aGotoAction);
-	Response* moveAction(Action* aMoveAction, Point aPosition, Point& aNewPosition);
+	Response* moveAction(Action* aMoveAction, Point aPosition);
 	Response* lookAction(Action* aLookAction, Point aPosition);
 	Response* takeAction(Action* aTakeAction, Point aPosition);
 	Response* turnAction(Action* aTurnAction);
 	Response* dieAction(Action* aDieAction, Point aPosition);
 
 	void fillField();
+	bool setCeil(uint_16 aNum, uint_16 aPr, CeilType& aCeil, CeilType aCeilTypes);
 	void setCreatures();
 };
 

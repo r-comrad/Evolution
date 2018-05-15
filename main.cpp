@@ -76,6 +76,6 @@ int main()
 	//return 0;
 
 	God god;
-	god.start();	
+	god.process();
 	return 0;
 }

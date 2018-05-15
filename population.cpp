@@ -22,7 +22,7 @@ LifeStatus
 Population::status()
 {
 	LifeStatus result;
-	if (mPopStatistic.getPopulationAge() == 0)
+	if (mPopStatistic.getPopulationAge() <= 1) // TODO
 	{
 		result = LifeStatus::NewTurn;
 	}
@@ -65,6 +65,22 @@ Population::evolve()
 		mMutateTemplate.push(mMutateTemplate.front());
 		mMutateTemplate.pop();
 	}
+
+	mCurentOrganism = mOrganisms.begin();
+}
+//--------------------------------------------------------------------------------
+void
+Population::step()
+{
+	mCurentOrganism->step();
+	++mCurentOrganism;
+	mPopStatistic.nextCreature();
+
+	if (mCurentOrganism == mOrganisms.end())
+	{
+		mCurentOrganism = mOrganisms.begin();
+		mPopStatistic.nextTurn();
+	}
 }
 //--------------------------------------------------------------------------------
 void
@@ -90,15 +106,9 @@ Population::getCreaturesLifes()
 {
 	std::list<sint_16> result;
 
-	for (uint_8 i = 0; i < mOrganisms.size(); ++i)
+	for (auto i : mOrganisms)
 	{
-		result.emplace_back(mCurentOrganism->getLife());
-		
-		++mCurentOrganism;
-		if (mCurentOrganism == mOrganisms.end())
-		{
-			mCurentOrganism = mOrganisms.begin();
-		}
+		result.emplace_back(i.getLife());
 	}
 
 	return result;
@@ -130,28 +140,15 @@ Population::processResponse(Response* aResponse)
 {
 	mCurentOrganism->processResponses(aResponse);
 
-	if (aResponse->isCompletAction())
-	{
-		mCurentOrganism->step();
-		++mCurentOrganism;
-		mPopStatistic.nextCreature();
-
-		if (mCurentOrganism == mOrganisms.end())
-		{
-			mCurentOrganism = mOrganisms.begin();
-			mPopStatistic.nextTurn();
-		}
-	}
-
 	//TODO RRRRRRRRRRRRRRRRRR
 	if (aResponse->mActionType == ActionType::DIE)
 	{
 		std::list<Creature> ::iterator it = mCurentOrganism;
-		if (it != mOrganisms.begin())
-			mOrganisms.erase(--it);
-		else mOrganisms.erase(--mOrganisms.end());
+		if (mCurentOrganism != mOrganisms.begin()) --mCurentOrganism;
+		else mCurentOrganism = --mOrganisms.end();
+		mOrganisms.erase(it);
 	}
 
-	delete(aResponse);			// TODO
+	//delete(aResponse);			// TODO
 }
 //--------------------------------------------------------------------------------

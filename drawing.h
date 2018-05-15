@@ -34,7 +34,7 @@ public:
 	void drawCreaturesLifes(CreaturesLifeList& aList);
 	void drawStatistic(const PopulationStatistic& aPopStatistic);
 
-	bool pressedN();
+	bool allowedNextStep();
 	bool stepByStep();
 
 private:

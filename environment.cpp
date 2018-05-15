@@ -34,7 +34,7 @@ Environment::process(Action* aAction)
 {
 	Response* response = NULL;
 
-	Point curPosition = mCoordinates.front();
+	Point curPosition = *mCurentCoordinate;
 
 	if (aAction->mActionType == ActionType::GOTO)
 	{
@@ -43,7 +43,7 @@ Environment::process(Action* aAction)
 	else if (aAction->mActionType == ActionType::MOVE)
 	{
 		// TODO curPosition?
-		response = moveAction(aAction, curPosition, curPosition);
+		response = moveAction(aAction, curPosition);
 	}
 	else if (aAction->mActionType == ActionType::LOOK)
 	{
@@ -62,16 +62,7 @@ Environment::process(Action* aAction)
 		response = dieAction(aAction, curPosition);
 	}
 
-	if (aAction->isCompletAction())
-	{
-		mCoordinates.pop();
-		if (!(aAction->mActionType == ActionType::DIE))
-		{
-			mCoordinates.push(curPosition);
-		}
-	}
-
-	delete(aAction);
+	//delete(aAction); //TODO?
 
 	return response;
 }
@@ -85,46 +76,60 @@ Environment::getField() const
 std::list<Point>
 Environment::getCreaturesCoordinates()
 {
-	std::list<Point> result;
-
-	for (uint_8 i = 0; i < mCoordinates.size(); ++i)
-	{
-		Point point = mCoordinates.front();
-		mCoordinates.pop();
-
-		result.emplace_back(point);
-		mCoordinates.push(point);
-	}
-
-	return result;
+	return mCoordinates;
 }
 //--------------------------------------------------------------------------------
 void 
 Environment::reset()
 {
-	while (!mCoordinates.empty())
-	{
-		mCoordinates.pop();
-	}
-	while (!mFood.empty())
-	{
-		mFood.pop();
-	}
-	while (!mPoison.empty())
-	{
-		mPoison.pop();
-	}
-
-	for (uint_16 i = 1; i < N - 1; ++i)
-	{
-		for (uint_16 j = 1; j < M - 1; ++j)
-		{
-			mField[i][j] = CeilType::EMPTY;
-		}
-	}
-
+	mCoordinates.clear();
 	fillField();
 	setCreatures();
+	mCurentCoordinate = mCoordinates.begin();
+}
+//--------------------------------------------------------------------------------
+void
+Environment::step()
+{
+	++mCurentCoordinate;
+	if (mCurentCoordinate == mCoordinates.end())
+	{
+		mCurentCoordinate = mCoordinates.begin();
+	}
+	// TODO mCurentCoordinate = mCoordinates.begin() после эволюции?
+
+	for (int i = 0; i < 2; ++i)
+		if (food > 0)
+	//while (food > 0)
+		{
+			uint_8 x = 0;
+			uint_8 y = 0;
+
+			while (mField[x][y] != CeilType::EMPTY)
+			{
+				x = rnd1(N - 1) + 1;
+				y = rnd1(M - 1) + 1;
+			}
+			mField[x][y] = CeilType::FOOD;
+			--food;
+		}
+
+	for (int i = 0; i < 2; ++i)
+		if (poison > 0)
+	//while (poison > 0)
+		{
+			uint_8 x = 0;
+			uint_8 y = 0;
+
+			while (mField[x][y] != CeilType::EMPTY)
+			{
+				x = rnd1(N - 1) + 1;
+				y = rnd1(M - 1) + 1;
+			}
+			mField[x][y] = CeilType::POISON;
+			--poison;
+		}
+
 }
 //--------------------------------------------------------------------------------
 Response* 
@@ -137,7 +142,7 @@ Environment::gotoAction(Action* aGotoAction)
 }
 //--------------------------------------------------------------------------------
 Response* 
-Environment::moveAction(Action* aMoveAction, Point aPosition, Point& aNewPosition)
+Environment::moveAction(Action* aMoveAction, Point aPosition)
 {
 	Response* response = NULL;
 	MoveAction* moveAction = static_cast<MoveAction*>(aMoveAction);
@@ -151,27 +156,30 @@ Environment::moveAction(Action* aMoveAction, Point aPosition, Point& aNewPositio
 	//	cout << y;
 	//}
  
-	if (mField[moveAction->getNewX()][moveAction->getNewY()] == CeilType::WALL ||
-		mField[moveAction->getNewX()][moveAction->getNewY()] == CeilType::CREATURE)
+	uint_8 x = moveAction->getNewX();
+	uint_8 y = moveAction->getNewY();
+	if (mField[x][y] == CeilType::WALL || mField[x][y] == CeilType::CREATURE)
 	{
 		dLife = 0;
 	}
 	else
 	{
-		if (mField[moveAction->getNewX()][moveAction->getNewY()] == FOOD)
+		if (mField[x][y] == FOOD)
 		{
 			dLife = 10;
+			food++;
 		}
-		else if (mField[moveAction->getNewX()][moveAction->getNewY()] == POISON)
+		else if (mField[x][y] == POISON)
 		{
 			dLife = -100;
+			poison--;
 		}
 
-		mField[moveAction->getNewX()][moveAction->getNewY()] = CREATURE;
+		mField[x][y] = CREATURE;
 		mField[moveAction->getOldX()][moveAction->getOldY()] = EMPTY;
 
 		// TODO: переделать action, возращать Point, использовать функции Point для получения координат
-		aNewPosition = Point(moveAction->getNewX(), moveAction->getNewY());
+		*mCurentCoordinate = Point(x, y);
 	}
 
 	response = new MoveResponse(dLife, moveAction->isCompletAction());
@@ -239,14 +247,19 @@ Environment::takeAction(Action* aTakeAction, Point aPosition)
 	//int rrr = takeAction->getY();
 	//mField[rr];
 	//mField[rr][rrr];
-	if (mField[takeAction->getX()][takeAction->getY()] == FOOD)
+	uint_8 x = takeAction->getX();
+	uint_8 y = takeAction->getY();
+	if (mField[x][y] == FOOD)
 	{
 		dLife = 10;
-		mField[takeAction->getX()][takeAction->getY()] = EMPTY;
+		mField[x][y] = EMPTY;
+		food++;
 	}
-	else if (mField[takeAction->getX()][takeAction->getY()] == POISON)
+	else if (mField[x][y] == POISON)
 	{
-		mField[takeAction->getX()][takeAction->getY()] = FOOD;
+		mField[x][y] = FOOD;
+		poison++;
+		food--;
 	}
 
 	response = new TakeResponse(dLife, takeAction->isCompletAction());
@@ -270,48 +283,82 @@ Environment::dieAction(Action* aDieAction, Point aPosition)
 	Response* response = NULL;
 	DieAction* dieAction = static_cast<DieAction*>(aDieAction);
 	response = new DieResponse(dieAction->isCompletAction());
+
+	std::list<Point> ::iterator it = mCurentCoordinate;
+	if (mCurentCoordinate != mCoordinates.begin()) --mCurentCoordinate;
+	else mCurentCoordinate = --mCoordinates.end();
+	mCoordinates.erase(it);
+	
+
 	return response;
 }
 //--------------------------------------------------------------------------------
 void
 Environment::fillField()
 {
-	int base = 600;
-	for (int i = 0; i < base;)
-	{
-		int x = rnd1(N - 1) + 1;
-		int y = rnd1(M - 1) + 1;
+	//int base = 600;
+	//for (int i = 0; i < base;)
+	//{
+	//	int x = rnd1(N - 1) + 1;
+	//	int y = rnd1(M - 1) + 1;
 
-		if (mField[x][y] != CeilType::EMPTY)
+	//	if (mField[x][y] != CeilType::EMPTY)
+	//	{
+	//		continue;
+	//	}
+	//	mField[x][y] = CeilType::FOOD;
+	//	mFood.emplace(x, y);
+	//	++i;
+	//}
+
+	//for (int i = 0; i < base / 2;)
+	//{
+	//	int x = rnd1(N - 1) + 1;
+	//	int y = rnd1(M - 1) + 1;
+
+	//	if (mField[x][y] != CeilType::EMPTY) continue;
+	//	mField[x][y] = CeilType::POISON;
+	//	mPoison.emplace(x, y);
+	//	++i;
+	//}
+
+	//for (int i = 0; i < base / 3;)
+	//{
+	//	int x = rnd1(N - 1) + 1;
+	//	int y = rnd1(M - 1) + 1;
+
+	//	if (mField[x][y] != CeilType::EMPTY) continue;
+	//	mField[x][y] = CeilType::WALL;
+	//	mPoison.emplace(x, y);
+	//	++i;
+	//}
+
+	for (int i = 1; i < mField.size() - 1; ++i)
+	{
+		for (int j = 1; j < mField[0].size() - 1; ++j)
 		{
-			continue;
+			int num = rnd1(101);
+
+			if (setCeil(num, 0 + 20, mField[i][j], FOOD));
+			else if (setCeil(num, 20 + 10, mField[i][j], POISON));
+			else if (setCeil(num, 30 + 10, mField[i][j], WALL));
+			else mField[i][j] = EMPTY;
 		}
-		mField[x][y] = CeilType::FOOD;
-		mFood.emplace(x, y);
-		++i;
 	}
+}
+//--------------------------------------------------------------------------------
+bool
+Environment::setCeil(uint_16 aNum, uint_16 aPr, CeilType& aCeil, CeilType aCeilTypes)
+{
+	bool result = false;
 
-	for (int i = 0; i < base / 2;)
+	if (aNum <= aPr)
 	{
-		int x = rnd1(N - 1) + 1;
-		int y = rnd1(M - 1) + 1;
-
-		if (mField[x][y] != CeilType::EMPTY) continue;
-		mField[x][y] = CeilType::POISON;
-		mPoison.emplace(x, y);
-		++i;
+		aCeil = aCeilTypes;
+		result = true;
 	}
 
-	for (int i = 0; i < base / 3;)
-	{
-		int x = rnd1(N - 1) + 1;
-		int y = rnd1(M - 1) + 1;
-
-		if (mField[x][y] != CeilType::EMPTY) continue;
-		mField[x][y] = CeilType::WALL;
-		mPoison.emplace(x, y);
-		++i;
-	}
+	return result;
 }
 //--------------------------------------------------------------------------------
 void
@@ -324,7 +371,7 @@ Environment::setCreatures()
 
 		if (mField[x][y] != CeilType::EMPTY) continue;
 		mField[x][y] = CeilType::CREATURE;
-		mCoordinates.emplace(x, y);
+		mCoordinates.emplace_back(x, y);
 		++i;
 	}
 }

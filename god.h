@@ -13,7 +13,7 @@ public:
 	God();
 	~God();
 
-	void start();
+	void process();
 
 private:
 	Environment mEnvironment;
@@ -24,6 +24,9 @@ private:
 
 	void step();
 	void evolve();
+
+	void next();
+	void draw();
 };
 
 #endif // GOD_H

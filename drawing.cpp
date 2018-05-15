@@ -220,14 +220,28 @@ Drawing::drawStatistic(const PopulationStatistic& aPopStatistic)
 }
 //--------------------------------------------------------------------------------
 bool 
-Drawing::pressedN()
+Drawing::allowedNextStep()
 {
-	if (nextStep == true)
+	bool result;
+
+	if (stepByStepFlag == true)
 	{
-		nextStep = false;
-		return true;
+		if (nextStep == true)
+		{
+			nextStep = false;
+			result = true;
+		}
+		else
+		{
+			result = false;
+		}
 	}
-	return false;
+	else
+	{
+		result = true;
+	}
+
+	return result;
 }
 //--------------------------------------------------------------------------------
 bool 

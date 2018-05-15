@@ -22,6 +22,7 @@ public:
 
 	LifeStatus status();
 	void evolve();
+	void step();
 
 	void savePopulation(std::stringstream ss);
 	void loadPopulation(std::stringstream ss);
