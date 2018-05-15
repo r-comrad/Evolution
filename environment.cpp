@@ -99,36 +99,54 @@ Environment::step()
 	// TODO mCurentCoordinate = mCoordinates.begin() после эволюции?
 
 	for (int i = 0; i < 2; ++i)
-		if (food > 0)
-	//while (food > 0)
+		if (mFood.size() > 0)
 		{
-			uint_8 x = 0;
-			uint_8 y = 0;
-
-			while (mField[x][y] != CeilType::EMPTY)
-			{
-				x = rnd1(N - 1) + 1;
-				y = rnd1(M - 1) + 1;
-			}
-			mField[x][y] = CeilType::FOOD;
-			--food;
+			Point p = mFood.front();
+			mFood.pop();
+			if (mField[p.mX][p.mY] == CeilType::EMPTY)
+				mField[p.mX][p.mY] = CeilType::FOOD;
+			else mFood.push(p);
 		}
-
 	for (int i = 0; i < 2; ++i)
-		if (poison > 0)
-	//while (poison > 0)
+		if (mPoison.size() > 0)
 		{
-			uint_8 x = 0;
-			uint_8 y = 0;
-
-			while (mField[x][y] != CeilType::EMPTY)
-			{
-				x = rnd1(N - 1) + 1;
-				y = rnd1(M - 1) + 1;
-			}
-			mField[x][y] = CeilType::POISON;
-			--poison;
+			Point p = mPoison.front();
+			mPoison.pop();
+			if (mField[p.mX][p.mY] == CeilType::EMPTY)
+				mField[p.mX][p.mY] = CeilType::POISON;
+			else mPoison.push(p);
 		}
+	//for (int i = 0; i < 2; ++i)
+		//if (food > 0)
+	//while (food > 0)
+		//{
+		//	uint_8 x = 0;
+		//	uint_8 y = 0;
+
+		//	while (mField[x][y] != CeilType::EMPTY)
+		//	{
+		//		x = rnd1(N - 1) + 1;
+		//		y = rnd1(M - 1) + 1;
+		//	}
+		//	mField[x][y] = CeilType::FOOD;
+		//	--food;
+		//}
+
+	//for (int i = 0; i < 2; ++i)
+	//	if (poison > 0)
+	////while (poison > 0)
+	//	{
+	//		uint_8 x = 0;
+	//		uint_8 y = 0;
+
+	//		while (mField[x][y] != CeilType::EMPTY)
+	//		{
+	//			x = rnd1(N - 1) + 1;
+	//			y = rnd1(M - 1) + 1;
+	//		}
+	//		mField[x][y] = CeilType::POISON;
+	//		--poison;
+	//	}
 
 }
 //--------------------------------------------------------------------------------
@@ -167,12 +185,14 @@ Environment::moveAction(Action* aMoveAction, Point aPosition)
 		if (mField[x][y] == FOOD)
 		{
 			dLife = 10;
-			food++;
+			//food++;
+			mFood.push(aPosition);
 		}
 		else if (mField[x][y] == POISON)
 		{
 			dLife = -100;
-			poison--;
+			//poison--;
+			mPoison.push(aPosition);
 		}
 
 		mField[x][y] = CREATURE;
@@ -253,13 +273,15 @@ Environment::takeAction(Action* aTakeAction, Point aPosition)
 	{
 		dLife = 10;
 		mField[x][y] = EMPTY;
-		food++;
+		//food++;
+		mFood.push(aPosition);
 	}
 	else if (mField[x][y] == POISON)
 	{
 		mField[x][y] = FOOD;
-		poison++;
-		food--;
+		mPoison.push(aPosition);
+		//poison++;
+		//food--;
 	}
 
 	response = new TakeResponse(dLife, takeAction->isCompletAction());
@@ -333,17 +355,65 @@ Environment::fillField()
 	//	++i;
 	//}
 
-	for (int i = 1; i < mField.size() - 1; ++i)
-	{
-		for (int j = 1; j < mField[0].size() - 1; ++j)
-		{
-			int num = rnd1(101);
+	//for (int i = 1; i < mField.size() - 1; ++i)
+	//{
+	//	for (int j = 1; j < mField[0].size() - 1; ++j)
+	//	{
+	//		int num = rnd1(101);
 
-			if (setCeil(num, 0 + 20, mField[i][j], FOOD));
-			else if (setCeil(num, 20 + 10, mField[i][j], POISON));
-			else if (setCeil(num, 30 + 10, mField[i][j], WALL));
-			else mField[i][j] = EMPTY;
+	//		if (setCeil(num, 0 + 20, mField[i][j], FOOD));
+	//		else if (setCeil(num, 20 + 10, mField[i][j], POISON));
+	//		else if (setCeil(num, 30 + 10, mField[i][j], WALL));
+	//		else mField[i][j] = EMPTY;
+	//	}
+	//}
+
+	for (int j = 1; j < mField.size() - 1; ++j)
+	{
+		for (int k = 1; k <  mField[0].size() - 1; ++k)
+		{
+			mField[j][k] = EMPTY;
 		}
+	}
+
+	for (int i = 0; i < 20; ++i)
+	{
+
+		int x = rnd1(N - 6) + 4;
+		int y = rnd1(M - 6) + 4;
+
+		for (int j = 0; j < 3; ++j)
+		{
+			for (int k = 0; k < 3; ++k)
+			{
+				mField[x + j][y + k] = FOOD;
+				mField[x - j][y - k] = FOOD;
+				mField[x + j][y - k] = FOOD;
+				mField[x - j][y + k] = FOOD;
+			}
+		}
+
+		mField[x][y] = WALL;
+	}
+
+	for (int i = 0; i < 10; ++i)
+	{
+
+		int x = rnd1(N - 6) + 4;
+		int y = rnd1(M - 6) + 4;
+
+		for (int j = 0; j < 3; ++j)
+		{
+			for (int k = 0; k < 3; ++k)
+			{
+				mField[x + j][y + k] = POISON;
+				mField[x - j][y - k] = POISON;
+				mField[x + j][y - k] = POISON;
+				mField[x - j][y + k] = POISON;
+			}
+		}
+
+		mField[x][y] = WALL;
 	}
 }
 //--------------------------------------------------------------------------------

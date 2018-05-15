@@ -30,6 +30,9 @@ private:
 	std::list<Point> ::iterator mCurentCoordinate;
 	std::list<Point> mCoordinates;
 
+	std::queue<Point> mFood;
+	std::queue<Point> mPoison;
+
 	sint_16 poison = 0;
 	sint_16 food = 0;
 
