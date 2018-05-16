@@ -13,24 +13,36 @@ Population::Population() :
 
 	mOrganisms.resize(64);
 	mCurentOrganism = mOrganisms.begin();
+
+	file.open("statistic1");
 }
 //--------------------------------------------------------------------------------
 Population::~Population()
-{}
+{
+	file.close();
+}
 //--------------------------------------------------------------------------------
 LifeStatus
 Population::status()
 {
 	LifeStatus result;
-	if (mPopStatistic.getPopulationAge() <= 1) // TODO
+	if (mPopStatistic.getPopulationAge() == 0 && 
+		mPopStatistic.getCreatureCount() == 0 &&
+		mPopStatistic.getCommandCount() == 0) // TODO
+	{
+		result = LifeStatus::NewPopulation;
+	}
+	else if (mPopStatistic.getCreatureCount() == 0 &&
+		mPopStatistic.getCommandCount() == 0) // TODO
 	{
 		result = LifeStatus::NewTurn;
 	}
-	if (mPopStatistic.getCommandCount() == 0)
+	else if (mPopStatistic.getCommandCount() == 0)
 	{
 		result = LifeStatus::NewCreature;
 	}
-	else if (mOrganisms.size() > mOrganismsMinCount)
+	else if (mOrganisms.size() > mOrganismsMinCount && 
+		mPopStatistic.getPopulationAge() < 5e4)
 	{
 		result = LifeStatus::NaturalSelection;
 	}
@@ -44,6 +56,7 @@ Population::status()
 void
 Population::evolve()
 {
+	file << mPopStatistic.getPopulationAge() << "\n";
 	mPopStatistic.nextCycle();
 
 	std::list<Creature> ::iterator it = mOrganisms.begin();
@@ -66,6 +79,17 @@ Population::evolve()
 		mMutateTemplate.pop();
 	}
 
+	if (mOrganisms.size() > mOrganismsMaxCount)
+	{
+		mOrganisms.resize(mOrganismsMaxCount);
+	}
+	else while (mOrganisms.size() < mOrganismsMaxCount)
+	{
+		mOrganisms.push_back(*(--mOrganisms.end()));
+		(--mOrganisms.end())->mutate(10);
+		(--mOrganisms.end())->reset();
+	}
+
 	mCurentOrganism = mOrganisms.begin();
 }
 //--------------------------------------------------------------------------------
@@ -81,6 +105,18 @@ Population::step()
 		mCurentOrganism = mOrganisms.begin();
 		mPopStatistic.nextTurn();
 	}
+}
+//--------------------------------------------------------------------------------
+uint_16
+Population::size()
+{
+	return mOrganisms.size();
+}
+//--------------------------------------------------------------------------------
+bool
+Population::canGrov()
+{
+	return mPopStatistic.getPopulationAge() % (64 / mOrganisms.size() * 5) == 0;
 }
 //--------------------------------------------------------------------------------
 void

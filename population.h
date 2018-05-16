@@ -12,7 +12,7 @@
 
 #define FILE_NAME ""
 
-enum LifeStatus { NewTurn, NewCreature, NaturalSelection, RequiresEvolution };
+enum LifeStatus { NewCreature, NewTurn, NewPopulation, NaturalSelection, RequiresEvolution };
 
 class Population
 {
@@ -23,6 +23,8 @@ public:
 	LifeStatus status();
 	void evolve();
 	void step();
+	uint_16 size();
+	bool canGrov();
 
 	void savePopulation(std::stringstream ss);
 	void loadPopulation(std::stringstream ss);
@@ -33,6 +35,8 @@ public:
 	void processResponse(Response* aResponse);
 
 private:
+	std::ofstream file;
+
 	uint_16 mOrganismsMinCount;
 	uint_16 mOrganismsMaxCount;
 	uint_16 mOrganismsChildCount;

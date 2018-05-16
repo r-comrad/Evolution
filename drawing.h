@@ -32,7 +32,7 @@ public:
 
 	void drawField(const std::vector<std::vector<CeilType>>& aField);
 	void drawCreaturesLifes(CreaturesLifeList& aList);
-	void drawStatistic(const PopulationStatistic& aPopStatistic);
+	void drawStatistic(const PopulationStatistic& aPopStatistic, uint_16 glN);
 
 	bool allowedNextStep();
 	bool stepByStep();

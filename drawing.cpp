@@ -200,8 +200,13 @@ Drawing::drawCreaturesLifes(CreaturesLifeList& aList)
 }
 //--------------------------------------------------------------------------------
 void
-Drawing::drawStatistic(const PopulationStatistic& aPopStatistic)
+Drawing::drawStatistic(const PopulationStatistic& aPopStatistic, uint_16 glN)
 {
+	mText.setCharacterSize(40);
+	mText.setPosition(1570, 50);
+	mText.setString(std::to_string(glN));
+	mWindow.draw(mText);
+
 	mText.setCharacterSize(18);
 	mText.setPosition(1685, 40);
 	mText.setString(std::to_string(aPopStatistic.getCreatureCount()));

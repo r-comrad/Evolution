@@ -27,6 +27,8 @@ private:
 
 	void next();
 	void draw();
+
+	uint_16 cnt = 0;
 };
 
 #endif // GOD_H

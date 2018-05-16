@@ -14,6 +14,7 @@ God::~God()
 
 }
 //--------------------------------------------------------------------------------
+uint_16 glN = 0;
 void 
 God::process()
 {
@@ -22,13 +23,24 @@ God::process()
 			
 		mDrawing.checkEvents();
 
-		if (mPopulation.status() == LifeStatus::NewTurn)
+		if (mPopulation.status() == LifeStatus::NewCreature)
+		{
+			if (!mDrawing.allowedNextStep()) continue;
+			step();
+			//draw();
+		}
+		else if (mPopulation.status() == LifeStatus::NewTurn)
 		{
 			if (!mDrawing.allowedNextStep()) continue;
 			step();
 			draw();
+			
+			uint_16 k = 64 / mPopulation.size();
+			//if (mPopulation.canGrov()) mEnvironment.newTurn();
+			++cnt;
+			if (cnt % k == 0) mEnvironment.newTurn();
 		}
-		else if (mPopulation.status() == LifeStatus::NewCreature)
+		else if (mPopulation.status() == LifeStatus::NewPopulation)
 		{
 			if (!mDrawing.allowedNextStep()) continue;
 			step();
@@ -38,7 +50,7 @@ God::process()
 		{
 			if (!mDrawing.allowedNextStep()) continue;
 			step();
-			draw();
+			//draw();
 		}
 		else if (mPopulation.status() == LifeStatus::RequiresEvolution)
 		{
@@ -67,8 +79,10 @@ God::step()
 void 
 God::evolve()
 {
+	++glN;
 	mPopulation.evolve();
 	mEnvironment.reset();
+	cnt = 0;
 }
 //--------------------------------------------------------------------------------
 void
@@ -91,6 +105,6 @@ God::draw()
 	}
 	const PopulationStatistic&
 		popStatistic = mPopulation.getPopulationStatistic();
-	mDrawing.drawStatistic(popStatistic);
+	mDrawing.drawStatistic(popStatistic, glN);
 	mDrawing.display();
 }

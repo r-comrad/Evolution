@@ -22,6 +22,7 @@ public:
 	void reset();
 
 	void step();
+	void newTurn();
 
 private:
 	std::vector<std::vector<CeilType>> mField;
@@ -33,6 +34,9 @@ private:
 	std::queue<Point> mFood;
 	std::queue<Point> mPoison;
 
+	std::queue<Point> mFoodCenter;
+	std::queue<Point> mPoisonCenter;
+
 	sint_16 poison = 0;
 	sint_16 food = 0;
 
@@ -43,6 +47,8 @@ private:
 	Response* turnAction(Action* aTurnAction);
 	Response* dieAction(Action* aDieAction, Point aPosition);
 
+	void growPlant(Point aPoint, CeilType aCeilType, uint_16 aSize);
+	void setPlant(CeilType aCeilType, std::queue<Point>& aQueueCenter);
 	void fillField();
 	bool setCeil(uint_16 aNum, uint_16 aPr, CeilType& aCeil, CeilType aCeilTypes);
 	void setCreatures();

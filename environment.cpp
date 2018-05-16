@@ -83,9 +83,63 @@ void
 Environment::reset()
 {
 	mCoordinates.clear();
+	while (!mFoodCenter.empty()) mFoodCenter.pop();
+	while (!mPoisonCenter.empty()) mPoisonCenter.pop();
+	while (!mFood.empty()) mFood.pop();
+	while (!mPoison.empty()) mPoison.pop();
+	poison = 0;
+	food = 0;
+
 	fillField();
 	setCreatures();
 	mCurentCoordinate = mCoordinates.begin();
+}
+//--------------------------------------------------------------------------------
+void 
+Environment::growPlant(Point aPoint, CeilType aCeilType, uint_16 aSize)
+{
+	sint_16 x = aPoint.mX;
+	sint_16 y = aPoint.mY;
+
+	sint_16 dx[] = { 1, 1, -1, -1 };
+	sint_16 dy[] = { 1, -1, 1, -1 };
+
+	uint_8 cnt = 0;
+	for (int j = 0; j < 3; ++j)
+	{
+		for (int k = 0; k < 3; ++k)
+		{
+			for (int i = 0; i < 4; ++i)
+			{
+				if (mField[x + j * dx[i]][y + k * dy[i]] == EMPTY)
+				{
+					mField[x + j * dx[i]][y + k * dy[i]] = aCeilType;
+					++cnt;
+					if (cnt == aSize) return;
+				}
+			}
+		}
+	}
+}
+//--------------------------------------------------------------------------------
+void
+Environment::newTurn()
+{
+	//for (int i = 0; i < 2; ++i)
+	//{
+	//	Point p = mFoodCenter.front();
+	//	mFoodCenter.pop();
+	//	mFoodCenter.push(p);
+	//	growPlant(p, FOOD, 3);
+	//}
+
+	//for (int i = 0; i < 1; ++i)
+	//{
+	//	Point p = mPoisonCenter.front();
+	//	mPoisonCenter.pop();
+	//	mPoisonCenter.push(p);
+	//	growPlant(p, POISON, 3);
+	//}
 }
 //--------------------------------------------------------------------------------
 void
@@ -98,55 +152,56 @@ Environment::step()
 	}
 	// TODO mCurentCoordinate = mCoordinates.begin() после эволюции?
 
-	for (int i = 0; i < 2; ++i)
-		if (mFood.size() > 0)
-		{
-			Point p = mFood.front();
-			mFood.pop();
-			if (mField[p.mX][p.mY] == CeilType::EMPTY)
-				mField[p.mX][p.mY] = CeilType::FOOD;
-			else mFood.push(p);
-		}
-	for (int i = 0; i < 2; ++i)
-		if (mPoison.size() > 0)
-		{
-			Point p = mPoison.front();
-			mPoison.pop();
-			if (mField[p.mX][p.mY] == CeilType::EMPTY)
-				mField[p.mX][p.mY] = CeilType::POISON;
-			else mPoison.push(p);
-		}
-	//for (int i = 0; i < 2; ++i)
-		//if (food > 0)
-	//while (food > 0)
-		//{
-		//	uint_8 x = 0;
-		//	uint_8 y = 0;
 
-		//	while (mField[x][y] != CeilType::EMPTY)
-		//	{
-		//		x = rnd1(N - 1) + 1;
-		//		y = rnd1(M - 1) + 1;
-		//	}
-		//	mField[x][y] = CeilType::FOOD;
-		//	--food;
-		//}
-
+	//--------------------------------------------------------------------------------
 	//for (int i = 0; i < 2; ++i)
-	//	if (poison > 0)
-	////while (poison > 0)
+	//	if (mFood.size() > 0)
 	//	{
-	//		uint_8 x = 0;
-	//		uint_8 y = 0;
-
-	//		while (mField[x][y] != CeilType::EMPTY)
-	//		{
-	//			x = rnd1(N - 1) + 1;
-	//			y = rnd1(M - 1) + 1;
-	//		}
-	//		mField[x][y] = CeilType::POISON;
-	//		--poison;
+	//		Point p = mFood.front();
+	//		mFood.pop();
+	//		if (mField[p.mX][p.mY] == CeilType::EMPTY)
+	//			mField[p.mX][p.mY] = CeilType::FOOD;
+	//		else mFood.push(p);
 	//	}
+	//for (int i = 0; i < 2; ++i)
+	//	if (mPoison.size() > 0)
+	//	{
+	//		Point p = mPoison.front();
+	//		mPoison.pop();
+	//		if (mField[p.mX][p.mY] == CeilType::EMPTY)
+	//			mField[p.mX][p.mY] = CeilType::POISON;
+	//		else mPoison.push(p);
+	//	}
+	//--------------------------------------------------------------------------------
+	for (int i = 0; i < 2; ++i)
+		if (food > 0)
+		{
+			uint_8 x = 0;
+			uint_8 y = 0;
+
+			while (mField[x][y] != CeilType::EMPTY)
+			{
+				x = rnd1(N - 1) + 1;
+				y = rnd1(M - 1) + 1;
+			}
+			mField[x][y] = CeilType::FOOD;
+			--food;
+		}
+
+	for (int i = 0; i < 2; ++i)
+		if (poison > 0)
+		{
+			uint_8 x = 0;
+			uint_8 y = 0;
+
+			while (mField[x][y] != CeilType::EMPTY)
+			{
+				x = rnd1(N - 1) + 1;
+				y = rnd1(M - 1) + 1;
+			}
+			mField[x][y] = CeilType::POISON;
+			--poison;
+		}
 
 }
 //--------------------------------------------------------------------------------
@@ -185,14 +240,14 @@ Environment::moveAction(Action* aMoveAction, Point aPosition)
 		if (mField[x][y] == FOOD)
 		{
 			dLife = 10;
-			//food++;
-			mFood.push(aPosition);
+			food++;
+			//mFood.push(Point(x, y));
 		}
 		else if (mField[x][y] == POISON)
 		{
 			dLife = -100;
-			//poison--;
-			mPoison.push(aPosition);
+			poison--;
+			//mPoison.push(Point(x, y));
 		}
 
 		mField[x][y] = CREATURE;
@@ -273,15 +328,15 @@ Environment::takeAction(Action* aTakeAction, Point aPosition)
 	{
 		dLife = 10;
 		mField[x][y] = EMPTY;
-		//food++;
-		mFood.push(aPosition);
+		food++;
+		//mFood.push(Point(x, y));
 	}
 	else if (mField[x][y] == POISON)
 	{
 		mField[x][y] = FOOD;
-		mPoison.push(aPosition);
-		//poison++;
-		//food--;
+		//mPoison.push(Point(x, y));
+		poison++;
+		food--;
 	}
 
 	response = new TakeResponse(dLife, takeAction->isCompletAction());
@@ -315,106 +370,75 @@ Environment::dieAction(Action* aDieAction, Point aPosition)
 	return response;
 }
 //--------------------------------------------------------------------------------
+void 
+Environment::setPlant(CeilType aCeilType, std::queue<Point>& aQueueCenter)
+{
+	sint_16 x, y;
+
+	do
+	{
+		x = rnd1(N - 6) + 4;
+		y = rnd1(M - 6) + 4;
+	} while (
+		mField[x + 2][y + 2] != EMPTY ||
+		mField[x + 2][y - 2] != EMPTY ||
+		mField[x - 2][y + 2] != EMPTY ||
+		mField[x - 2][y - 2] != EMPTY
+		);
+
+	for (int j = 0; j < 3; ++j)
+	{
+		for (int k = 0; k < 3; ++k)
+		{
+			mField[x + j][y + k] = aCeilType;
+			mField[x + j][y - k] = aCeilType;
+			mField[x - j][y + k] = aCeilType;
+			mField[x - j][y - k] = aCeilType;
+		}
+	}
+
+	mField[x][y] = WALL;
+	mField[x - 1][y] = WALL;
+	mField[x][y - 1] = WALL;
+	mField[x + 1][y] = WALL;
+	mField[x][y + 1] = WALL;
+
+	aQueueCenter.push(Point(x, y));
+}
+//--------------------------------------------------------------------------------
 void
 Environment::fillField()
 {
-	//int base = 600;
-	//for (int i = 0; i < base;)
-	//{
-	//	int x = rnd1(N - 1) + 1;
-	//	int y = rnd1(M - 1) + 1;
+	for (int i = 1; i < mField.size() - 1; ++i)
+	{
+		for (int j = 1; j < mField[0].size() - 1; ++j)
+		{
+			int num = rnd1(101);
 
-	//	if (mField[x][y] != CeilType::EMPTY)
+			if (setCeil(num, 0 + 20, mField[i][j], FOOD));
+			else if (setCeil(num, 20 + 10, mField[i][j], POISON));
+			else if (setCeil(num, 30 + 10, mField[i][j], WALL));
+			else mField[i][j] = EMPTY;
+		}
+	}
+
+	//for (int j = 1; j < mField.size() - 1; ++j)
+	//{
+	//	for (int k = 1; k <  mField[0].size() - 1; ++k)
 	//	{
-	//		continue;
-	//	}
-	//	mField[x][y] = CeilType::FOOD;
-	//	mFood.emplace(x, y);
-	//	++i;
-	//}
-
-	//for (int i = 0; i < base / 2;)
-	//{
-	//	int x = rnd1(N - 1) + 1;
-	//	int y = rnd1(M - 1) + 1;
-
-	//	if (mField[x][y] != CeilType::EMPTY) continue;
-	//	mField[x][y] = CeilType::POISON;
-	//	mPoison.emplace(x, y);
-	//	++i;
-	//}
-
-	//for (int i = 0; i < base / 3;)
-	//{
-	//	int x = rnd1(N - 1) + 1;
-	//	int y = rnd1(M - 1) + 1;
-
-	//	if (mField[x][y] != CeilType::EMPTY) continue;
-	//	mField[x][y] = CeilType::WALL;
-	//	mPoison.emplace(x, y);
-	//	++i;
-	//}
-
-	//for (int i = 1; i < mField.size() - 1; ++i)
-	//{
-	//	for (int j = 1; j < mField[0].size() - 1; ++j)
-	//	{
-	//		int num = rnd1(101);
-
-	//		if (setCeil(num, 0 + 20, mField[i][j], FOOD));
-	//		else if (setCeil(num, 20 + 10, mField[i][j], POISON));
-	//		else if (setCeil(num, 30 + 10, mField[i][j], WALL));
-	//		else mField[i][j] = EMPTY;
+	//		mField[j][k] = EMPTY;
 	//	}
 	//}
 
-	for (int j = 1; j < mField.size() - 1; ++j)
-	{
-		for (int k = 1; k <  mField[0].size() - 1; ++k)
-		{
-			mField[j][k] = EMPTY;
-		}
-	}
+	//for (int i = 0; i < 20; ++i)
+	//{
+	//	setPlant(FOOD, mFoodCenter);
+	//}
 
-	for (int i = 0; i < 20; ++i)
-	{
-
-		int x = rnd1(N - 6) + 4;
-		int y = rnd1(M - 6) + 4;
-
-		for (int j = 0; j < 3; ++j)
-		{
-			for (int k = 0; k < 3; ++k)
-			{
-				mField[x + j][y + k] = FOOD;
-				mField[x - j][y - k] = FOOD;
-				mField[x + j][y - k] = FOOD;
-				mField[x - j][y + k] = FOOD;
-			}
-		}
-
-		mField[x][y] = WALL;
-	}
-
-	for (int i = 0; i < 10; ++i)
-	{
-
-		int x = rnd1(N - 6) + 4;
-		int y = rnd1(M - 6) + 4;
-
-		for (int j = 0; j < 3; ++j)
-		{
-			for (int k = 0; k < 3; ++k)
-			{
-				mField[x + j][y + k] = POISON;
-				mField[x - j][y - k] = POISON;
-				mField[x + j][y - k] = POISON;
-				mField[x - j][y + k] = POISON;
-			}
-		}
-
-		mField[x][y] = WALL;
-	}
+	//for (int i = 0; i < 10; ++i)
+	//{
+	//	setPlant(POISON, mPoisonCenter);
+	//}
 }
 //--------------------------------------------------------------------------------
 bool
