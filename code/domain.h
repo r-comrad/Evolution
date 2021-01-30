@@ -28,6 +28,7 @@ typedef unsigned	__int64		uint_64;
 
 uint_16 rnd1(uint_16 mod = 32767);
 uint_64 rnd2(uint_64 mod);
+uint_64 rnd(uint_64 aFrom, uint_64 aTo);
 
 enum struct Direction { UP, UP_RIGHT, RIGHT, RIGHT_DOWN, DOWN, DOWN_LEFT, LEFT, LEFT_UP};
 

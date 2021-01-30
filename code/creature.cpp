@@ -154,6 +154,16 @@ Creature::reset()
 	mLife = 60;
 	mDirection = Direction(rnd1(8));
 	mPrCount = 0;
+	std::vector<int> additionalNumbers = {0, 5, 1, 0, 0, 0, 1};
+	for (int i = 0; i < mProgram.size(); ++i)
+	{
+		int num = rnd(1, 6);
+		mProgram[i] = num;
+		for (int j = 0; j < additionalNumbers[num]; ++j)
+		{
+			mProgram[i + j + 1] = rnd(1, 8);
+		}
+	}
 }
 //--------------------------------------------------------------------------------
 bool 

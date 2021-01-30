@@ -12,6 +12,13 @@ uint_64 rnd2(uint_64 mod)
 	return num % mod;
 }
 
+uint_64 rnd(uint_64 aFrom, uint_64 aTo)
+{
+	uint_64 num =rand();
+	uint_64 mod = aTo + 1 - aFrom;
+	return num % mod + aFrom;
+}
+
 const Direction& 
 operator++(Direction& aDir)
 {
