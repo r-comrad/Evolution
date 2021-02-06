@@ -44,22 +44,18 @@ Creature::Creature() :
 Creature::~Creature()
 {}
 //--------------------------------------------------------------------------------
-Action*
+Object::ObjectAction
 Creature::getAction()
 {
 	uint_16 curCommand = mProgram[mPrCount];
-	std::map<std::pair<uint_16, uint_16>, ActionType, PairCmp> ::iterator
-		it = programDecoder.find(std::make_pair(curCommand, curCommand));
-	ActionType actionType = it->second;
 
-	Action* result = NULL; 
+	Object::ObjectAction result;
 	if (mLife < 1)
 	{
-		result = new DieAction();
+		result = Object::ObjectAction::DIE;
 	}
-	else if (actionType == ActionType::GOTO)
+	else if (curCommand == CreatureComands::LOOK)
 	{
-		mPrCount = curCommand;
 		result = new GotoAction();
 	}
 	else  if (actionType == ActionType::MOVE)

@@ -12,18 +12,26 @@
 #include "object.h"
 
 //#define MAX_PROGRAM_WORD_VALUE		uint_16(319)
-//#define MAX_LIFE					uint_16(90)
-//#define CREATURE_REPRODUCTION_COUNT uint_16(8)
-#define PROGRAM_SIZE				uint_16(65)
+//#define MAX_LIFE						uint_16(90)
+//#define CREATURE_REPRODUCTION_COUNT	uint_16(8)
+#define PROGRAM_SIZE					uint_16(65)
 
-class Creature
+class Creature : public Object
 {
 public:
+
+	enum CreatureComands { LOOK = 1, TURN = 2, EAT = 3, 
+		ACTION = 4, MOVE = 5, GOTO = 6
+	};
+	enum ComandsSize {
+		LOOK = 5, TURN = 1, EAT = 0,
+		ACTION = 0, MOVE = 0, GOTO = 1
+	};
 
 	Creature();
 	~Creature();
 
-	virtual Action* getAction() const;
+	virtual Object::ObjectAction;' getAction() const;
 	virtual std::vector<Object*> multiply(int aChildCount) const;
 	virtual void update(std::vector<int>);
 	sint_16 getLife() const;
@@ -42,7 +50,7 @@ private:
 	sint_16 mLife;
 	Direction mDirection;
 
-	void  reset();
+	void reset();
 	void incPrCount(uint_16 aDPrCount = 1);
 	void lifeChange(sint_16 aDLife);
 
