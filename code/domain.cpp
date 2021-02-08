@@ -19,68 +19,6 @@ uint_64 rnd(uint_64 aFrom, uint_64 aTo)
 	return num % mod + aFrom;
 }
 
-const Direction& 
-operator++(Direction& aDir)
-{
-	switch (aDir)
-	{
-	case Direction::UP:			return aDir = Direction::UP_RIGHT;
-	case Direction::UP_RIGHT:	return aDir = Direction::RIGHT;
-	case Direction::RIGHT:		return aDir = Direction::RIGHT_DOWN;
-	case Direction::RIGHT_DOWN: return aDir = Direction::DOWN;
-	case Direction::DOWN:		return aDir = Direction::DOWN_LEFT;
-	case Direction::DOWN_LEFT:	return aDir = Direction::LEFT;
-	case Direction::LEFT:		return aDir = Direction::LEFT_UP;
-	case Direction::LEFT_UP:	return aDir = Direction::UP;
-	}
-}
-const Direction
-operator++(Direction& aDir, int)
-{
-	switch (aDir)
-	{
-	case Direction::UP:			return aDir = Direction::UP_RIGHT;
-	case Direction::UP_RIGHT:	return aDir = Direction::RIGHT;
-	case Direction::RIGHT:		return aDir = Direction::RIGHT_DOWN;
-	case Direction::RIGHT_DOWN: return aDir = Direction::DOWN;
-	case Direction::DOWN:		return aDir = Direction::DOWN_LEFT;
-	case Direction::DOWN_LEFT:	return aDir = Direction::LEFT;
-	case Direction::LEFT:		return aDir = Direction::LEFT_UP;
-	case Direction::LEFT_UP:	return aDir = Direction::UP;
-	}
-}
-
-const Direction&
-operator--(Direction& aDir)
-{
-	switch (aDir)
-	{
-	case Direction::UP:			return aDir = Direction::LEFT_UP;
-	case Direction::UP_RIGHT:	return aDir = Direction::UP;
-	case Direction::RIGHT:		return aDir = Direction::UP_RIGHT;
-	case Direction::RIGHT_DOWN: return aDir = Direction::RIGHT;
-	case Direction::DOWN:		return aDir = Direction::RIGHT_DOWN;
-	case Direction::DOWN_LEFT:	return aDir = Direction::DOWN;
-	case Direction::LEFT:		return aDir = Direction::DOWN_LEFT;
-	case Direction::LEFT_UP:	return aDir = Direction::LEFT;
-	}
-}
-const Direction
-operator--(Direction& aDir, int)
-{
-	switch (aDir)
-	{
-	case Direction::UP:			return aDir = Direction::LEFT_UP;
-	case Direction::UP_RIGHT:	return aDir = Direction::UP;
-	case Direction::RIGHT:		return aDir = Direction::UP_RIGHT;
-	case Direction::RIGHT_DOWN: return aDir = Direction::RIGHT;
-	case Direction::DOWN:		return aDir = Direction::RIGHT_DOWN;
-	case Direction::DOWN_LEFT:	return aDir = Direction::DOWN;
-	case Direction::LEFT:		return aDir = Direction::DOWN_LEFT;
-	case Direction::LEFT_UP:	return aDir = Direction::LEFT;
-	}
-}
-
 sint_8 dX[] = { -1, -1, 0, 1, 1, 1, 0, -1 };
 sint_8 dY[] = { 0, 1, 1, 1, 0, -1, -1, -1 };
 

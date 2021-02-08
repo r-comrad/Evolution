@@ -11,7 +11,7 @@ Object::Action*
 Object::getAction() const
 {
 	Action* action = new Action();
-	action->mObjectAction = new Object::ObjectAction(NON);
+	action->mObjectAction = Object::ObjectAction(NON);
 	return action;
 }
 //--------------------------------------------------------------------------------

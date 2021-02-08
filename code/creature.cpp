@@ -11,73 +11,113 @@ Creature::Creature() :
 	mProgram	(PROGRAM_SIZE)
 {
 	reset();
-
-	for (auto& i : mProgram) i = rnd1(MAX_PROGRAM_WORD_VALUE + 1);
-		//mProgram = 
-		//{
-		//	129, 7, 7, 65, 193, 7, 0, 258,
-		//	129, 15, 15, 65, 193, 15, 0, 258,
-		//	129, 23, 23, 65, 193, 23, 0, 258,
-		//	129, 31, 31, 65, 193, 31, 0, 258,
-		//	129, 39, 39, 65, 193, 39, 0, 258,
-		//	129, 47, 47, 65, 193, 47, 0, 258,
-		//	129, 55, 55, 65, 193, 55, 0, 258,
-		//	258, 64
-		//};
-
-
-	if (programDecoder.size() == 0)
-	{
-		programDecoder.insert(std::pair<std::pair<uint_16, uint_16>, ActionType>
-			(std::make_pair(0, 63), ActionType::GOTO));
-		programDecoder.insert(std::pair<std::pair<uint_16, uint_16>, ActionType>
-			(std::make_pair(64, 127), ActionType::MOVE));
-		programDecoder.insert(std::pair<std::pair<uint_16, uint_16>, ActionType>
-			(std::make_pair(128, 191), ActionType::LOOK));
-		programDecoder.insert(std::pair<std::pair<uint_16, uint_16>, ActionType>
-			(std::make_pair(192, 256), ActionType::TAKE));
-		programDecoder.insert(std::pair<std::pair<uint_16, uint_16>, ActionType>
-			(std::make_pair(257, 319), ActionType::TURN));
-	}
 }
 //--------------------------------------------------------------------------------
 Creature::~Creature()
 {}
 //--------------------------------------------------------------------------------
-Object::ObjectAction
-Creature::getAction()
+
+const Creature::Direction&
+operator++(Creature::Direction& aDir)
 {
+	Creature::Direction::Down;
+	switch (aDir)
+	{
+		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpRight;
+		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Right;
+		case Creature::Direction::Right		:	return aDir = Creature::Direction::DownRight;
+		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Down;
+		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownLeft;
+		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Left;
+		case Creature::Direction::Left		:	return aDir = Creature::Direction::UpLeft;
+		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Up;
+	}
+}
+
+const Creature::Direction
+operator++(Creature::Direction& aDir, int)
+{
+	switch (aDir)
+	{
+		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpRight;
+		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Right;
+		case Creature::Direction::Right		:	return aDir = Creature::Direction::DownRight;
+		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Down;
+		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownLeft;
+		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Left;
+		case Creature::Direction::Left		:	return aDir = Creature::Direction::UpLeft;
+		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Up;
+	}
+}
+
+const Creature::Direction&
+operator--(Creature::Direction& aDir)
+{
+	switch (aDir)
+	{
+		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpLeft;
+		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Up;
+		case Creature::Direction::Right		:	return aDir = Creature::Direction::UpRight;
+		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Right;
+		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownRight;
+		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Down;
+		case Creature::Direction::Left		:	return aDir = Creature::Direction::DownLeft;
+		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Left;
+	}
+}
+
+const Creature::Direction
+operator--(Creature::Direction& aDir, int)
+{
+	switch (aDir)
+	{
+		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpLeft;
+		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Up;
+		case Creature::Direction::Right		:	return aDir = Creature::Direction::UpRight;
+		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Right;
+		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownRight;
+		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Down;
+		case Creature::Direction::Left		:	return aDir = Creature::Direction::DownLeft;
+		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Left;
+	}
+}
+
+Object::Action*
+Creature::getAction() const
+{
+	Object::Action* result = Object::getAction();
 	uint_16 curCommand = mProgram[mPrCount];
 
 	Object::ObjectAction result;
 	if (mLife < 1)
 	{
-		result = Object::ObjectAction::DIE;
+		result->mObjectAction = Object::ObjectAction::DIE;
 	}
 	else if (curCommand == CreatureComands::LOOK)
 	{
-		result = new GotoAction();
+		result->mObjectAction = Object::ObjectAction::LOOK;
+		Acr
 	}
-	else  if (actionType == ActionType::MOVE)
+	else  if (curCommand == CreatureComands::TURN)
 	{
-		incPrCount();
-		result = new MoveAction(mDirection);
+		result->mObjectAction = Object::ObjectAction::NON;
 	}
-	else if (actionType == ActionType::LOOK)
+	else if (curCommand == CreatureComands::EAT)
 	{
-		incPrCount(0);
-		result = new LookAction(mDirection);
+		result->mObjectAction = Object::ObjectAction::EAT;
 	}
-	else if (actionType == ActionType::TAKE)
+	else if (curCommand == CreatureComands::ACTION)
 	{
-		incPrCount();
-		result = new TakeAction(mDirection);
+		result->mObjectAction = Object::ObjectAction::ACTION;
 	}
-	else if (actionType == ActionType::TURN)
+	else if (curCommand == CreatureComands::MOVE)
 	{
-		++mDirection;
-		incPrCount();
-		result = new TurnAction();	
+		result->mObjectAction = Object::ObjectAction::MOVE;
+	}
+	else if (curCommand == CreatureComands::GOTO)
+	{
+		result->mObjectAction = Object::ObjectAction::NON;
+
 	}
 
 	return result;

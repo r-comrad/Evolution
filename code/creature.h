@@ -28,10 +28,19 @@ public:
 		ACTION = 0, MOVE = 0, GOTO = 1
 	};
 
+	enum struct Direction { Up, UpRight, Right, DownRight, Down, DownLeft, Left, UpLeft };
+
+	const Direction& operator++(Direction& aDir);
+	const Direction operator++(Direction& aDir, int);
+
+	const Direction& operator--(Direction& aDir);
+	const Direction operator--(Direction& aDir, int);
+
+
 	Creature();
 	~Creature();
 
-	virtual Object::ObjectAction;' getAction() const;
+	virtual Object::Action* getAction() const;
 	virtual std::vector<Object*> multiply(int aChildCount) const;
 	virtual void update(std::vector<int>);
 	sint_16 getLife() const;
