@@ -26,7 +26,8 @@ public:
 	virtual Action* getAction() const;
 	const ObjectType& getType() const;
 	virtual std::vector<Object*> multiply(int aChildCount) const;
-	virtual void update(std::vector<int>);
+	virtual bool update(std::vector<int> aResponce);
+	void mutate(uint_8 aMutCount);
 };
 
 #endif // OBJECT_H

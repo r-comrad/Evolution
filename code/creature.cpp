@@ -4,11 +4,17 @@
 // Creature implementation
 //--------------------------------------------------------------------------------
 
+//const Direction Creature::operator++(Direction& aDir, int)
+//{
+//	return Direction();
+//}
+
 //Creature::Creature()
 //{}
 //--------------------------------------------------------------------------------
 Creature::Creature() :
-	mProgram	(PROGRAM_SIZE)
+	mProgram	(PROGRAM_SIZE), 
+	mDirection	(0)
 {
 	reset();
 }
@@ -16,77 +22,18 @@ Creature::Creature() :
 Creature::~Creature()
 {}
 //--------------------------------------------------------------------------------
-
-const Creature::Direction&
-operator++(Creature::Direction& aDir)
-{
-	Creature::Direction::Down;
-	switch (aDir)
-	{
-		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpRight;
-		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Right;
-		case Creature::Direction::Right		:	return aDir = Creature::Direction::DownRight;
-		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Down;
-		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownLeft;
-		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Left;
-		case Creature::Direction::Left		:	return aDir = Creature::Direction::UpLeft;
-		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Up;
-	}
-}
-
-const Creature::Direction
-operator++(Creature::Direction& aDir, int)
-{
-	switch (aDir)
-	{
-		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpRight;
-		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Right;
-		case Creature::Direction::Right		:	return aDir = Creature::Direction::DownRight;
-		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Down;
-		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownLeft;
-		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Left;
-		case Creature::Direction::Left		:	return aDir = Creature::Direction::UpLeft;
-		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Up;
-	}
-}
-
-const Creature::Direction&
-operator--(Creature::Direction& aDir)
-{
-	switch (aDir)
-	{
-		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpLeft;
-		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Up;
-		case Creature::Direction::Right		:	return aDir = Creature::Direction::UpRight;
-		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Right;
-		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownRight;
-		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Down;
-		case Creature::Direction::Left		:	return aDir = Creature::Direction::DownLeft;
-		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Left;
-	}
-}
-
-const Creature::Direction
-operator--(Creature::Direction& aDir, int)
-{
-	switch (aDir)
-	{
-		case Creature::Direction::Up		:	return aDir = Creature::Direction::UpLeft;
-		case Creature::Direction::UpRight	:	return aDir = Creature::Direction::Up;
-		case Creature::Direction::Right		:	return aDir = Creature::Direction::UpRight;
-		case Creature::Direction::DownRight	:	return aDir = Creature::Direction::Right;
-		case Creature::Direction::Down		:	return aDir = Creature::Direction::DownRight;
-		case Creature::Direction::DownLeft	:	return aDir = Creature::Direction::Down;
-		case Creature::Direction::Left		:	return aDir = Creature::Direction::DownLeft;
-		case Creature::Direction::UpLeft	:	return aDir = Creature::Direction::Left;
-	}
-}
-
 Object::Action*
-Creature::getAction() const
+Creature::getAction()
 {
+	//TODO: block comands (LOOK doesn't work correctly, need to goto by 5 comands)
+
 	Object::Action* result = Object::getAction();
-	uint_16 curCommand = mProgram[mPrCount];
+	sint_16 curCommand = mProgram[mComandPointer];
+
+	result->mX = mDirection.getX();
+	result->mY = mDirection.getY();
+
+	++mActionCount;
 
 	Object::ObjectAction result;
 	if (mLife < 1)
@@ -96,87 +43,89 @@ Creature::getAction() const
 	else if (curCommand == CreatureComands::LOOK)
 	{
 		result->mObjectAction = Object::ObjectAction::LOOK;
-		Acr
 	}
 	else  if (curCommand == CreatureComands::TURN)
 	{
 		result->mObjectAction = Object::ObjectAction::NON;
+		incComandPointer(1);
+		curCommand = mProgram[mComandPointer];
+		curCommand -= 5;
+		for (sint_16 i = 0; i < curCommand; ++i) ++mDirection;
+		for (sint_16 i = 0; i < -curCommand; ++i) --mDirection;
 	}
 	else if (curCommand == CreatureComands::EAT)
 	{
 		result->mObjectAction = Object::ObjectAction::EAT;
+		incComandPointer(1);
+		mActionCount += 100;
 	}
 	else if (curCommand == CreatureComands::ACTION)
 	{
 		result->mObjectAction = Object::ObjectAction::ACTION;
+		incComandPointer(1);
+		mActionCount += 100;
 	}
 	else if (curCommand == CreatureComands::MOVE)
 	{
 		result->mObjectAction = Object::ObjectAction::MOVE;
+		incComandPointer(1);
+		mActionCount += 100;
 	}
 	else if (curCommand == CreatureComands::GOTO)
 	{
 		result->mObjectAction = Object::ObjectAction::NON;
+		incComandPointer(1);
+		curCommand = mProgram[mComandPointer];
+		incComandPointer(curCommand);
+	}
 
+	return result;
+}
+
+std::vector<Object*>
+Creature::multiply(int aChildCount) const
+{
+
+}
+//--------------------------------------------------------------------------------
+bool
+Creature::update(std::vector<int> aResponce)
+{
+	bool result = false;
+	uint_16 curCommand = mProgram[mComandPointer];
+
+	if (curCommand == CreatureComands::LOOK)
+	{
+		if (aResponce[0] == Object::ObjectType::EMPTY) incComandPointer(1);
+		else if (aResponce[0] == Object::ObjectType::FOOD) incComandPointer(2);
+		else if (aResponce[0] == Object::ObjectType::POISON) incComandPointer(3);
+		else if (aResponce[0] == Object::ObjectType::WALL) incComandPointer(4);
+		else if (aResponce[0] == Object::ObjectType::CREATURE) incComandPointer(5);
+	}
+
+	if (curCommand == CreatureComands::EAT)
+	{
+		mLife += aResponce[0];
+	}
+	if (curCommand == CreatureComands::ACTION)
+	{
+		mLife += aResponce[0];
+	}
+	if (curCommand == CreatureComands::MOVE)
+	{
+		mLife += aResponce[0];
+	}
+
+	if (mActionCount >= MAX_NINIACTIONS_COUNT)
+	{
+		result = true;
+		mActionCount = 0;
+		--mLife;
 	}
 
 	return result;
 }
 //--------------------------------------------------------------------------------
-void
-Creature::processResponses(Response* aResponse)
-{
-	if (aResponse->mActionType == ActionType::GOTO)
-	{}
-	else if (aResponse->mActionType == ActionType::MOVE)
-	{
-		MoveResponse* moveResponse = static_cast<MoveResponse*>(aResponse);
-		lifeChange(moveResponse->mDLife);
-	}
-	else if (aResponse->mActionType == ActionType::LOOK)
-	{
-		LookResponse* lookResponse = static_cast<LookResponse*>(aResponse);
-
-		if (lookResponse->mCeilType == LookResponse::CeilType::EMPTY)
-		{
-			incPrCount(4);
-			//incPrCount(5);
-		}
-		else  if (lookResponse->mCeilType == LookResponse::CeilType::CREATURE)
-		{
-			incPrCount(3);
-			//mDPrCount = 4;
-		}
-		else  if (lookResponse->mCeilType == LookResponse::CeilType::FOOD)
-		{
-			incPrCount(2);
-			//mDPrCount = 3;
-		}
-		else  if (lookResponse->mCeilType == LookResponse::CeilType::POISON)
-		{
-			incPrCount(1);
-			//mDPrCount = 2;
-		}
-		else  if (lookResponse->mCeilType == LookResponse::CeilType::WALL)
-		{
-			incPrCount(3);
-			//mDPrCount = 1;
-		}
-	}
-	else if(aResponse->mActionType == ActionType::TAKE)
-	{
-		TakeResponse* takeResponse = static_cast<TakeResponse*>(aResponse);
-		lifeChange(takeResponse->mDLife);
-	}
-	else if (aResponse->mActionType == ActionType::TURN)
-	{}
-}
-//--------------------------------------------------------------------------------
-void 
-Creature::step()
-{
-	--mLife;
-}
 //--------------------------------------------------------------------------------
 sint_16
 Creature::getLife() const
@@ -188,27 +137,21 @@ void
 Creature::reset()
 {
 	mLife = 60;
-	mDirection = Direction(rnd1(8));
-	mPrCount = 0;
-	std::vector<int> additionalNumbers = {0, 5, 1, 0, 0, 0, 1};
-	for (int i = 0; i < mProgram.size(); ++i)
-	{
-		int num = rnd(1, 6);
-		mProgram[i] = num;
-		for (int j = 0; j < additionalNumbers[num]; ++j)
-		{
-			mProgram[i + j + 1] = rnd(1, 8);
-		}
-	}
+	mDirection = Direction(rnd(0, 8));
+	mComandPointer = 0;
+	mActionCount = 0;
+	//TODO: programm reset?
+	//for (int i = 0; i < mProgram.size(); ++i)
+	//{
+	//	int num = rnd(1, 6);
+	//	mProgram[i] = num;
+	//	for (int j = 0; j < additionalNumbers[num]; ++j)
+	//	{
+	//		mProgram[i + j + 1] = rnd(1, 8);
+	//	}
+	//}
 }
 //--------------------------------------------------------------------------------
-bool 
-Creature::PairCmp::operator()(const std::pair<uint_16, uint_16>& p1,
-	const std::pair<uint_16, uint_16>& p2) const
-{
-	if (p1.second < p2.first) return true;
-	return false;
-}
 //--------------------------------------------------------------------------------
 void 
 Creature::mutate(uint_8 aMutCount)
@@ -217,9 +160,8 @@ Creature::mutate(uint_8 aMutCount)
 	while (changeNumbers.size() < aMutCount &&
 		changeNumbers.size() < mProgram.size())
 	{
-		int num = rnd1(mProgram.size());
-		if (changeNumbers.find(num) == changeNumbers.end())
-			changeNumbers.insert(num);
+		int num = rnd(0, mProgram.size() - 1);
+		changeNumbers.insert(num);
 	}
 
 	for (const auto& i : changeNumbers)
@@ -229,12 +171,12 @@ Creature::mutate(uint_8 aMutCount)
 }
 //--------------------------------------------------------------------------------
 void
-Creature::incPrCount(uint_16 aDPrCount)
+Creature::incComandPointer(uint_16 aValue)
 {
-	mPrCount += aDPrCount;
+	mComandPointer += aValue;
 
-	while (mPrCount >= mProgram.size()) 
-		mPrCount -= mProgram.size();
+	while (aValue >= mProgram.size())
+		aValue -= mProgram.size();
 }
 //--------------------------------------------------------------------------------
 void 
@@ -242,6 +184,6 @@ Creature::lifeChange(sint_16 aDLife)
 {
 	mLife += aDLife;
 	if (mLife > MAX_LIFE) mLife = MAX_LIFE;
-	if (mLife <= 0) mLife = -100;
+	if (mLife <= 0) mLife = -5;
 }
 //--------------------------------------------------------------------------------
